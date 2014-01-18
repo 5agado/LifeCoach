@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	
+	<xs:complexType name="personType">
+		<xs:sequence>
+			<xs:element name="personId" type="xs:integer"/>
+			<xs:element name="firstname" type="xs:string"/>
+			<xs:element name="lastname" type="xs:string"/>
+			<xs:element name="birthdate" type="xs:dateTime"/>
+			<xs:element name="email" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="measureDefinitionType">
+		<xs:sequence>
+			<xs:element name="measureDefId" type="xs:integer"/>
+			<xs:element name="measureName" type="xs:string"/>
+			<xs:element name="measureType" type="xs:string"/>
+			<xs:element name="profileType" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="measureType">
+		<xs:sequence>
+			<xs:element name="measureId" type="xs:integer"/>
+			<xs:element name="value" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+
+  <xs:complexType name="goal">
+    <xs:sequence>
+      <xs:element name="goalId" type="xs:int"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="comparator" type="xs:string" minOccurs="0"/>
+      <xs:element name="value" type="xs:string" minOccurs="0"/>
+      <xs:element name="expDate" type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+	<xs:element name="goal" type="goal"/>
+	
+</xs:schema>

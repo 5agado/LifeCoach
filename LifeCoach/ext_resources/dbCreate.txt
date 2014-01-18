@@ -1,0 +1,68 @@
+DROP TABLE IF EXISTS Person;
+DROP TABLE IF EXISTS MeasureDefinition;
+DROP TABLE IF EXISTS Measure;
+DROP TABLE IF EXISTS Goal;
+
+-- Table: Person
+CREATE TABLE Person ( 
+    personId  INTEGER PRIMARY KEY AUTOINCREMENT,
+    firstname TEXT  DEFAULT 'NULL',
+    lastname  TEXT  DEFAULT 'NULL',
+    birthdate DATETIME        DEFAULT 'NULL',
+    email     TEXT DEFAULT 'NULL'
+);
+
+INSERT INTO [Person] ([personId], [firstname], [lastname], [birthdate], [email]) VALUES (1, 'Chuck', 'Norris', '1945-01-01 00:00:00', 'chuck.norris@gmail.com');
+
+-- Table: MeasureDefinition
+CREATE TABLE MeasureDefinition ( 
+    measureDefId INTEGER PRIMARY KEY AUTOINCREMENT,
+    measureName  TEXT  UNIQUE,
+    measureType  TEXT  DEFAULT 'NULL',
+    profileType  TEXT  DEFAULT 'NULL'
+);
+
+INSERT INTO [MeasureDefinition] ([measureDefId], [measureName], [measureType], [profileType]) VALUES (1, 'weight', 'double', 'health');
+INSERT INTO [MeasureDefinition] ([measureDefId], [measureName], [measureType], [profileType]) VALUES (2, 'height', 'double', 'health');
+INSERT INTO [MeasureDefinition] ([measureDefId], [measureName], [measureType], [profileType]) VALUES (3, 'steps', 'integer', 'health');
+INSERT INTO [MeasureDefinition] ([measureDefId], [measureName], [measureType], [profileType]) VALUES (4, 'calories', 'double', 'lifestyle');
+
+-- Table: Measure
+CREATE TABLE Measure ( 
+    measureId  INTEGER PRIMARY KEY AUTOINCREMENT,
+    measureDefId INTEGER       DEFAULT 'NULL',
+    personId     INTEGER       DEFAULT 'NULL',
+    value        TEXT,
+    timestamp    DATETIME      DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ( measureDefId ) REFERENCES MeasureDefinition ( measureDefId ) ON DELETE NO ACTION
+                                                                                   ON UPDATE NO ACTION,
+    FOREIGN KEY ( personId ) REFERENCES Person ( personId ) ON DELETE NO ACTION
+                                                                ON UPDATE NO ACTION 
+);
+
+INSERT INTO [Measure] ([measureId], [measureDefId], [personId], [value], [timestamp]) VALUES (1, 1, 1, 72.3, '2012-12-27 23:00:00');
+
+-- Table: Goal
+CREATE TABLE Goal ( 
+    goalId  INTEGER PRIMARY KEY AUTOINCREMENT,
+    description TEXT  DEFAULT 'NULL',
+    value     TEXT  DEFAULT 'NULL',
+    comparator     TEXT  DEFAULT 'NULL',
+    expDate DATETIME        DEFAULT 'NULL',
+    timestamp DATETIME        DEFAULT 'NULL',
+    measureDefId INTEGER       DEFAULT 'NULL',
+    personId     INTEGER       DEFAULT 'NULL',
+    
+    FOREIGN KEY ( measureDefId ) REFERENCES MeasureDefinition ( measureDefId ) ON DELETE NO ACTION
+                                                                                   ON UPDATE NO ACTION,
+    FOREIGN KEY ( personId ) REFERENCES Person ( personId ) ON DELETE NO ACTION
+                                                                ON UPDATE NO ACTION 
+);
+
+-- Measure Indexes 
+CREATE INDEX Measure_MeasureDefinition_idx ON Measure ( measureDefId );
+CREATE INDEX Measure_Person_idx ON Measure ( personId );
+
+-- Measure Indexes 
+CREATE INDEX Goal_MeasureDefinition_idx ON Goal ( measureDefId );
+CREATE INDEX Goal_Person_idx ON Goal ( personId );
