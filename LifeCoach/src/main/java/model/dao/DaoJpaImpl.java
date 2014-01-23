@@ -2,6 +2,8 @@ package model.dao;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -9,6 +11,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
 public class DaoJpaImpl<T, PK extends Serializable> implements Dao<T, PK> {
+	private final static Logger LOGGER = Logger.getLogger(DaoJpaImpl.class.getName());
 	private static final String PERSISTENCE_UNIT_NAME = "FinalProject";
 	
 	protected Class<T> entityClass;
@@ -16,7 +19,7 @@ public class DaoJpaImpl<T, PK extends Serializable> implements Dao<T, PK> {
     
     static {
     	entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-        System.out.println("static entity manager creation");
+    	LOGGER.log(Level.CONFIG, "static EntityManagerFactory created");
     }
 	
 	@SuppressWarnings("unchecked")

@@ -15,7 +15,7 @@ public class TestProfileClient {
 	public void testreadProfileGoals() {
 		List<Goal> goals = client.readProfileGoals(2, "blood");
 		for (Goal g : goals){
-			String goal = Serializer.marshalString(Goal.class, g);
+			String goal = Serializer.marshalString(g);
 			System.out.println(goal);
 		}
 	}

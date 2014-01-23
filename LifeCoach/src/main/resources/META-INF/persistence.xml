@@ -11,7 +11,7 @@
 		<class>model.Goal</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.sqlite.JDBC" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:sqlite:C:\Users\Alex\Workspace\final-project\src\main\resources\database.db" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:sqlite:C:\Users\Alex\git\edu.sagado.SDE.LifeCoach\LifeCoach\src\main\resources\database.db" />
 			<property name="eclipselink.logging.level" value="FINE" />
 			<!-- <property name="eclipselink.query-results-cache" value="false" />
 			<property name="eclipselink.cache.shared.default" value="false" />  -->

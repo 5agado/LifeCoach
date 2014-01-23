@@ -9,8 +9,8 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  * http://www.abbreviations.com/api.php
  * 
  */
-public class Stands4Client extends RESTClient {
-	private final static String SERVER_URL = "http://www.stands4.com/services/v2/quotes.php";
+public class QuotesClient extends RESTClient {
+	private final static String STANDS4_URL = "http://www.stands4.com/services/v2/quotes.php";
 	private final static String USER_ID_PARAM_NAME = "uid";
 	private final static String USER_ID = "3163";
 	private final static String TOKEN_ID_PARAM_NAME = "tokenid";
@@ -21,8 +21,9 @@ public class Stands4Client extends RESTClient {
 	
 	private final static String IHEART_URL = "http://www.iheartquotes.com/api/v1/random?format=json";
 	
-	public Stands4Client() {
-		super(SERVER_URL);
+	public QuotesClient() {
+		//TODO add possibility of other sources
+		super(STANDS4_URL);
 	}
 	
 	//Sample: http://www.stands4.com/services/v2/quotes.php?

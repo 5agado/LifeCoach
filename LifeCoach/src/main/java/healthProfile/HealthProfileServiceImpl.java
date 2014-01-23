@@ -1,14 +1,20 @@
 package healthProfile;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.jws.WebService;
+
+import model.Measure;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -16,11 +22,11 @@ import org.w3c.dom.NodeList;
 import util.Serializer;
 import util.XMLAdapter;
 import client.ProfileClient;
-import model.Measure;
 
 @WebService(endpointInterface = "healthProfile.HealthProfileServiceInterface", serviceName = "HealthProfileService")
 public class HealthProfileServiceImpl implements HealthProfileServiceInterface {
-	private String profileType;
+	private final static Logger LOGGER = Logger.getLogger(HealthProfileServiceImpl.class.getName());
+	
 	private ProfileClient client = new ProfileClient("http://localhost:8080/SDE_Final_Project/rest");
 	private HealthProfileAdapter adapter;
 	
@@ -30,27 +36,36 @@ public class HealthProfileServiceImpl implements HealthProfileServiceInterface {
 	}
 
 	@Override
-	public HealthProfile readPersonHealthProfile(int personId, String profileType) {
-		this.profileType = profileType;
+	public HealthProfile readPersonHealthProfile(int personId, String profileType) {		
+		HealthProfile profile = new HealthProfile();
 		
 		//TODO expose adapter as a service
-		//TODO define good way for the source name to be passed + personId
-		adapter = new HealthProfileAdapter("src/main/resources/BloodProfile_01.xml");
+		try {
+			adapter = new HealthProfileAdapter(profileType, personId);
+		} catch (IOException e) {
+			LOGGER.log(Level.WARNING, "No such profile type or person ID", e);
+			return profile;
+		}
 		
 		if (!adapter.isCurrentSourceUpToDate()){
 			updateRemoteMeasures(personId);
 		}
 		
-		List<Measure> stdMeasures = readRemoteProfile(personId);
+		List<Measure> stdMeasures = readRemoteProfile(personId, profileType);
 		
 		List<HealthMeasure> healthMeasures = computeAndGetMeasuresFrom(stdMeasures);
 		
-		HealthProfile profile = new HealthProfile();
+		if (healthMeasures.isEmpty()){
+			return profile;
+		}
+		
 		profile.setMeasures(healthMeasures);
 		
 		String suggestions = getSuggestionForProfile(profile);
 		
 		profile.setSuggestions(suggestions);
+		
+		profile.setTimestamp(new Date());
 		
 		return profile;
 	}
@@ -68,8 +83,8 @@ public class HealthProfileServiceImpl implements HealthProfileServiceInterface {
 		adapter.setUpToDate();
 	}
 	
-	private List<Measure> readRemoteProfile(int personId){
-		String remoteProfile = client.readProfile(personId, profileType);
+	private List<Measure> readRemoteProfile(int personId, String profileType){
+		String remoteProfile = client.readProfileAsString(personId, profileType);
 		InputStream profileIO = new ByteArrayInputStream(remoteProfile.getBytes(StandardCharsets.UTF_8));
 		XMLAdapter profileAdapter = new XMLAdapter(profileIO);
 		NodeList nodeList = profileAdapter.readNodeList("/measures/measure");
@@ -100,9 +115,18 @@ public class HealthProfileServiceImpl implements HealthProfileServiceInterface {
 		final String WARNING_LOW = "*";
 		final String WARNING_MEDIUM = "**";
 		final String WARNING_HIGH = "***";
+		
 		String[] minMax = measure.getRefLevel().split("-");
-		double min = Double.valueOf(minMax[0]);
-		double max = Double.valueOf(minMax[1]);
+		double min;
+		double max;
+		try {
+			min = Double.valueOf(minMax[0]);
+			max = Double.valueOf(minMax[1]);
+		} catch (NumberFormatException e) {
+			LOGGER.log(Level.WARNING, e.getLocalizedMessage());
+			return;
+		}
+		
 		double range = max - min;
 		double diff = 0;
 		double value = Double.valueOf(measure.getValue());
@@ -138,6 +162,9 @@ public class HealthProfileServiceImpl implements HealthProfileServiceInterface {
 		List<HealthMeasure> measures = profile.getMeasures();
 		for (HealthMeasure m : measures){
 			String wLevel = m.getWarning();
+			if (wLevel == null){
+				continue;
+			}
 			switch (wLevel) {
 			case WARNING_LOW:
 				profileIlness += 1;

@@ -1,6 +1,5 @@
 package client;
 
-import healthProfile.HealthMeasure;
 import healthProfile.HealthProfile;
 import healthProfile.HealthProfileServiceInterface;
 

@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response.Status;
 import model.Person;
 import model.dao.PersonDao;
 
-@Path("person/")
+@Path("/person/")
 public class PersonResource {
 	private final PersonDao personDao = PersonDao.getInstance();
 	

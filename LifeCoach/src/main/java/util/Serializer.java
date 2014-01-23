@@ -24,9 +24,9 @@ public class Serializer {
 		throw new AssertionError();
 	}
 	
-	public static <T> void marshal(Class<T> objClass, Object obj, File out) {
+	public static <T> void marshal(T obj, File out) {
 		try {
-			JAXBContext context = JAXBContext.newInstance(objClass);
+			JAXBContext context = JAXBContext.newInstance(obj.getClass());
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			marshaller.marshal(obj, out);
@@ -37,9 +37,9 @@ public class Serializer {
 		
 	}
 	
-	public static <T> String marshalString(Class<T> objClass, Object obj) {
+	public static <T> String marshalString(T obj) {
 		try {
-			JAXBContext context = JAXBContext.newInstance(objClass);
+			JAXBContext context = JAXBContext.newInstance(obj.getClass());
 			StringWriter sw = new StringWriter();
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -51,11 +51,11 @@ public class Serializer {
 		return "";
 	}
 	
-	public static <T> Class<T> unmarshal(Class<T> objClass, Reader reader) {
+	public static <T> T unmarshal(Class<T> objClass, Reader reader) {
 		try {
 			JAXBContext context = JAXBContext.newInstance(objClass);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
-			Class<T> res = (Class<T>) unmarshaller.unmarshal(reader);
+			T res = (T) unmarshaller.unmarshal(reader);
 			return res;
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
@@ -64,11 +64,11 @@ public class Serializer {
 		}
 	}
 	
-	public static <T> Object unmarshal(Class<T> objClass, Node node) {
+	public static <T> T unmarshal(Class<T> objClass, Node node) {
 		try {
 			JAXBContext context = JAXBContext.newInstance(objClass);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
-			Class<T> res = (Class<T>) unmarshaller.unmarshal(node);
+			T res = (T) unmarshaller.unmarshal(node);
 			return res;
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block

@@ -1,8 +1,11 @@
 package adapters;
 
+import static org.junit.Assert.assertNotNull;
 import healthProfile.HealthProfileAdapter;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -14,11 +17,21 @@ import org.junit.Test;
 
 import util.XMLAdapter;
 
-public class TestXMLAdapter {
+public class TestHealthProfileAdapter {
+	HealthProfileAdapter adapter;
+	
+	public TestHealthProfileAdapter() throws IOException {
+		try {
+			adapter = new HealthProfileAdapter("blood", 2);
+		} catch (IOException e) {
+			System.out.println("No such profile type or person ID" + e.getLocalizedMessage());
+			assertNotNull("No such profile type or person ID", null);
+		}
+	}
+	
 	@Test
 	public void readHealthMeasures() {
-		HealthProfileAdapter reader = new HealthProfileAdapter("src/main/resources/Blood.xml");
-		List<Measure> list = reader.readMeasures();
+		List<Measure> list = adapter.readMeasures();
 		JAXBContext context;
 		try {
 			context = JAXBContext.newInstance(Measure.class);
@@ -33,14 +46,18 @@ public class TestXMLAdapter {
 	}
 	
 	@Test
+	public void readLevels() {
+		String level = adapter.readReferenceLevelAsString("leucociti");
+		System.out.println(level);
+	}
+	
+	@Test
 	public void checkIfUpToDate() {
-		HealthProfileAdapter reader = new HealthProfileAdapter("src/main/resources/Blood.xml");
-		System.out.println(reader.isCurrentSourceUpToDate());
+		System.out.println(adapter.isCurrentSourceUpToDate());
 	}
 	
 	@Test
 	public void setUpToDate() {
-		HealthProfileAdapter reader = new HealthProfileAdapter("src/main/resources/Blood.xml");
-		reader.setUpToDate();
+		adapter.setUpToDate();
 	}
 }

@@ -24,12 +24,12 @@ import model.dao.PersonDao;
 
 //??Better goal and ?measure=
 @Path("/person/{id}/{measure}/goal/")
-public class GoalResources {
+public class GoalResource {
 	private final PersonDao personDao = PersonDao.getInstance();
 	private final GoalDao goalDao = GoalDao.getInstance();
 	private final MeasureDefinitionDao measureDefinitionDao = MeasureDefinitionDao
 			.getInstance();
-
+	
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public List<Goal> readAllGoals(@PathParam("id") int personId,
@@ -62,6 +62,8 @@ public class GoalResources {
 		if (list.isEmpty()) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
+		//TODO set current date
+		//also check for update
 		goal.setMeasureDefinition(list.get(0));
 		goal.setPerson(p);
 		goal.setGoalId(0);

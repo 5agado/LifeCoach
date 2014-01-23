@@ -1,5 +1,6 @@
 package resources;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -8,20 +9,26 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import client.Stands4Client;
+import model.Goal;
 import model.Measure;
+import model.MeasureDefinition;
 import model.Person;
+import model.dao.GoalDao;
 import model.dao.MeasureDao;
+import model.dao.MeasureDefinitionDao;
 import model.dao.PersonDao;
 
-@Path("/person/{id}/profile/")
+@Path("/person/{id}/profile/{profileType}/")
 public class ProfileResource {
 	private final PersonDao personDao = PersonDao.getInstance();
 	private final MeasureDao measureDao = MeasureDao.getInstance();
+	private final GoalDao goalDao = GoalDao.getInstance();
+	private final MeasureDefinitionDao measureDefinitionDao = MeasureDefinitionDao
+			.getInstance();
 	
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	@Path("{profileType}")
+	@Path("measures")
 	public List<Measure> readProfile(@PathParam("id") int personId,
 			@PathParam("profileType") String profileType) {
 		Person p = personDao.read(personId);
@@ -33,14 +40,33 @@ public class ProfileResource {
 		return profile;
 	}
 	
-	//TODO tmp
-	//move this in a more conson place, add an object for motivational phrase reppresentation
-	//and convert from different sources
 	@GET
-	@Path("motivational")
-	public String getMotivationalPhrase() {
-		Stands4Client client = new Stands4Client();
-		String res = client.getRandomQuote();
-		return res;
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Path("goals")
+	public List<Goal> readAllGoals(@PathParam("id") int personId,
+			@PathParam("profileType") String profileType) {
+		//TODO check
+		Person p = personDao.read(personId);
+		if (p == null) {
+			return null;
+		}
+		
+		if (profileType == null){
+			return goalDao.readAllByPerson(personId);
+		}
+		
+		List<MeasureDefinition> list = measureDefinitionDao
+				.readByProfileType(profileType);
+		if (list.isEmpty()) {
+			return null;
+		}
+		
+		List<Goal> goals = new ArrayList<Goal>();
+		for (MeasureDefinition def : list){
+			List<Goal> subGoals = goalDao.readAllByPersonAndDefinition(personId, def.getMeasureDefId());
+			goals.addAll(subGoals);
+		}
+		
+		return goals;
 	}
 }

@@ -1,56 +1,41 @@
 package healthProfile;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import model.Measure;
 import model.MeasureDefinition;
-import model.dao.MeasureDefinitionDao;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import util.Serializer;
 import util.XMLAdapter;
 
-public class HealthProfileAdapter extends XMLAdapter {	
-	private String sourceName;
+public class HealthProfileAdapter {	
+	private static final String INFO_FILES_PATH = "src/main/resources/healthProfile_info_src/";
+	private static final String LEVELS_FILENAME = "levels";
+	private static final String ADVICE_FILENAME = "advice";
+	private static final String PROFILE_FILENAME = "profile";
+	private static final String STD_FILE_EXTENSION = ".xml"; 
+	private XMLAdapter profileAdapter;
+	private XMLAdapter levelsAdapter;
+	private XMLAdapter adviceAdapter;
 	
-	//TODO automatic obtain uri, ask only for sourceName
-	public HealthProfileAdapter(String sourceURI) {
-		super(sourceURI);
-		sourceName = sourceURI;
+	public HealthProfileAdapter(String profileType, int personId) throws IOException {
+		profileAdapter = new XMLAdapter(INFO_FILES_PATH + profileType + "_" + PROFILE_FILENAME + "_" + personId + STD_FILE_EXTENSION);
+		levelsAdapter = new XMLAdapter(INFO_FILES_PATH + profileType + "_" + LEVELS_FILENAME + STD_FILE_EXTENSION);
+		adviceAdapter = new XMLAdapter(INFO_FILES_PATH + profileType + "_" + ADVICE_FILENAME + STD_FILE_EXTENSION);
 	}
 	
 	//The measure are without the MeasureDefinition info
 	public List<Measure> readMeasures() {
 		List<Measure> list = new ArrayList<Measure>();
-		NodeList nodeList = readNodeList("/measures/measure");
+		NodeList nodeList = profileAdapter.readNodeList("/measures/measure");
         
 		for (int i=0; i<nodeList.getLength(); i++){
 			Node currentNode = nodeList.item(i);	
@@ -70,13 +55,19 @@ public class HealthProfileAdapter extends XMLAdapter {
 	}
 	
 	public XMLevel readReferenceLevelFor(String measureName) {
-		Node node = (Node) readNode("/ref_levels/level[measureName='" + measureName + "']");
+		Node node = (Node) levelsAdapter.readNode("/ref_levels/level[measureName='" + measureName + "']");
+		if (node == null){
+			return new XMLevel();
+		}
 		XMLevel level = (XMLevel) Serializer.unmarshal(XMLevel.class, node);
         return level;
 	}
 	
 	public String readAdviceFor(String measureName) {
-		Node node = (Node) readNode("/advice_list/advice[measureName='" + measureName + "']");
+		Node node = (Node) adviceAdapter.readNode("/advice_list/advice[measureName='" + measureName + "']");
+		if (node == null){
+			return "";
+		}
 		XMLAdvice advice = (XMLAdvice) Serializer.unmarshal(XMLAdvice.class, node);
         return advice.getContent();
 	}
@@ -89,17 +80,14 @@ public class HealthProfileAdapter extends XMLAdapter {
 	//Check if the current loaded XML database is up to date, or if it
 	//has been modified. We use the attribute value "updated"
 	public boolean isCurrentSourceUpToDate() {
-		String attributeValue = getAttributeValue("/measures/@updated");
+		String attributeValue = profileAdapter.getAttributeValue("/measures/@updated");
 		return Boolean.valueOf(attributeValue);
 	}
 	
 	//Set the current loaded XML database as up to date, generally
 	//because we have read it and updated the value in local database 
 	public void setUpToDate() {
-		Node node = (Node) readNode("/measures/@updated");
-		node.setNodeValue(String.valueOf(true));
-		
-		overwriteCurrentSourceTo(sourceName);
+		profileAdapter.setAttributeValue("/measures/@updated", String.valueOf(true));
 	}
 	
 	@XmlRootElement(name = "measure")

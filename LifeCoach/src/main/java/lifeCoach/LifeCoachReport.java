@@ -14,7 +14,7 @@ import model.Measure;
 
 @XmlRootElement
 @XmlAccessorType (XmlAccessType.FIELD)
-@XmlType(propOrder = {"measure", "goal", "suggestions", "motivational" })
+@XmlType(propOrder = {"measures", "goals", "goalsStates", "suggestions", "motivational" })
 public class LifeCoachReport implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -24,6 +24,8 @@ public class LifeCoachReport implements Serializable {
 	@XmlElement(name = "goal")
 	private List<Goal> goals;
 	
+	private List<String> goalsStates;
+
 	private String suggestions;
 	
 	private String motivational;
@@ -38,6 +40,14 @@ public class LifeCoachReport implements Serializable {
 
 	public void setMeasures(List<Measure> measures) {
 		this.measures = measures;
+	}
+	
+	public List<String> getGoalsStates() {
+		return goalsStates;
+	}
+
+	public void setGoalsStates(List<String> goalsStates) {
+		this.goalsStates = goalsStates;
 	}
 
 	public List<Goal> getGoals() {
