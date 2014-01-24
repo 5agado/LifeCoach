@@ -1,4 +1,4 @@
-package lifeCoach;
+package lifeCoach.model;
 
 public class LifeCoachMeasure {
 

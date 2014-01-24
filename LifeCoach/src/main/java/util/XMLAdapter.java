@@ -28,58 +28,48 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class XMLAdapter {
-	private final static Logger LOGGER = Logger.getLogger(XMLAdapter.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(XMLAdapter.class
+			.getName());
 	private Document database = null;
 	private XPath xpath = null;
 	private String sourceUri = null;
-	
-	//TODO automatic obtain uri, ask only for sourceName
-	public XMLAdapter(String sourceURI) throws IOException {
+
+	public XMLAdapter(String sourceURI) throws IOException, SAXException,
+			ParserConfigurationException {
 		this.sourceUri = sourceURI;
 		initXmlTools(sourceURI);
 	}
-	
-	public XMLAdapter(InputStream streamSource) {
+
+	public XMLAdapter(InputStream streamSource) throws SAXException,
+			IOException, ParserConfigurationException {
 		initXmlToolsForStream(streamSource);
 	}
-	
+
 	/*
-	 * Loads the XML database and creates xpath object 
+	 * Loads the XML database and creates xpath object
 	 */
-	private void initXmlTools(String sourceName) throws IOException{		
-		try{
-	        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	        factory.setNamespaceAware(true);
-	        DocumentBuilder builder = factory.newDocumentBuilder();
-	        database = builder.parse(sourceName);
-	
-	        XPathFactory xFactory = XPathFactory.newInstance();
-	        xpath = xFactory.newXPath();
-		} catch (SAXException e) {
-	        e.printStackTrace();
-	    } catch (ParserConfigurationException e) {
-	        e.printStackTrace();
-	    }
-    }
-	
-	private void initXmlToolsForStream(InputStream streamSource){		
-		try{
-	        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	        factory.setNamespaceAware(true);
-	        DocumentBuilder builder = factory.newDocumentBuilder();
-	        database = builder.parse(streamSource);
-	
-	        XPathFactory xFactory = XPathFactory.newInstance();
-	        xpath = xFactory.newXPath();
-		} catch (SAXException e) {
-	        e.printStackTrace();
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    } catch (ParserConfigurationException e) {
-	        e.printStackTrace();
-	    }
-    }
-	
+	private void initXmlTools(String sourceName) throws IOException,
+			SAXException, ParserConfigurationException {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true);
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		database = builder.parse(sourceName);
+
+		XPathFactory xFactory = XPathFactory.newInstance();
+		xpath = xFactory.newXPath();
+	}
+
+	private void initXmlToolsForStream(InputStream streamSource)
+			throws SAXException, IOException, ParserConfigurationException {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true);
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		database = builder.parse(streamSource);
+
+		XPathFactory xFactory = XPathFactory.newInstance();
+		xpath = xFactory.newXPath();
+	}
+
 	public Node readNode(String xPathCompileExpression) {
 		Node node = null;
 		try {
@@ -88,57 +78,59 @@ public class XMLAdapter {
 		} catch (XPathExpressionException e) {
 			e.printStackTrace();
 		}
-		
+
 		return node;
 	}
-	
+
 	public NodeList readNodeList(String xPathCompileExpression) {
 		NodeList nodeList = null;
 		try {
 			XPathExpression expr = xpath.compile(xPathCompileExpression);
-			nodeList = (NodeList) expr.evaluate(database, XPathConstants.NODESET);
+			nodeList = (NodeList) expr.evaluate(database,
+					XPathConstants.NODESET);
 		} catch (XPathExpressionException e) {
 			e.printStackTrace();
 		}
-		
+
 		return nodeList;
 	}
-	
+
 	public String getAttributeValue(String xPathCompileExpression) {
 		try {
 			XPathExpression expr = xpath.compile(xPathCompileExpression);
-			String attributeValue = expr.evaluate(database, XPathConstants.STRING).toString();
+			String attributeValue = expr.evaluate(database,
+					XPathConstants.STRING).toString();
 			return attributeValue;
 		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "No such Attribute", e.getLocalizedMessage());
 			return "";
 		}
 	}
-	
+
 	public boolean setAttributeValue(String xPathCompileExpression, String value) {
 		Node node = (Node) readNode(xPathCompileExpression);
 		node.setNodeValue(value);
 		boolean res = saveChanges();
 		return res;
 	}
-	
+
 	private boolean saveChanges() {
-		if (sourceUri == null){
-			LOGGER.log(Level.WARNING, "This adapter is from stream source. Cannot call saveChanges");
+		if (sourceUri == null) {
+			LOGGER.log(Level.WARNING,
+					"This adapter is from stream source. Cannot call saveChanges");
 			return false;
 		}
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer;
+		TransformerFactory transformerFactory = TransformerFactory
+				.newInstance();
+		Transformer transformer;
 		try {
 			transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(database);
-	        StreamResult result = new StreamResult(new File(sourceUri));
-	        transformer.transform(source, result);
-	        return true;
+			StreamResult result = new StreamResult(new File(sourceUri));
+			transformer.transform(source, result);
+			return true;
 		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Stream saving failed", e.getLocalizedMessage());
 			return false;
 		}
 	}

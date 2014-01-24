@@ -21,7 +21,6 @@ import model.dao.MeasureDao;
 import model.dao.MeasureDefinitionDao;
 import model.dao.PersonDao;
 
-//??Eternalize method to check person and definition validity
 @Path("/person/{id}/{measure}/")
 public class MeasureResource {
 	private final PersonDao personDao = PersonDao.getInstance();
@@ -33,7 +32,6 @@ public class MeasureResource {
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public List<Measure> readAllMeasures(@PathParam("id") int personId,
 			@PathParam("measure") String measureName) {
-		//TODO check
 		Person p = personDao.read(personId);
 		if (p == null) {
 			return null;
@@ -64,7 +62,6 @@ public class MeasureResource {
 		measure.setMeasureDefinition(list.get(0));
 		measure.setPerson(p);
 		measure.setMeasureId(0);
-		// TODO check value type
 		measure = measureDao.create(measure);
 		if (measure != null)
 			return Response.ok(measure, MediaType.APPLICATION_XML).build();
@@ -78,7 +75,6 @@ public class MeasureResource {
 	public Measure readMeasure(@PathParam("id") int personId,
 			@PathParam("measure") String measureName,
 			@PathParam("mid") int measureId) {
-		//TODO check
 		Person p = personDao.read(personId);
 		if (p == null) {
 			return null;

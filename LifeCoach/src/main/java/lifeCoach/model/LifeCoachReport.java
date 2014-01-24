@@ -1,4 +1,4 @@
-package lifeCoach;
+package lifeCoach.model;
 
 import java.io.Serializable;
 import java.util.List;

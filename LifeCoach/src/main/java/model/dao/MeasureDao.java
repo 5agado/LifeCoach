@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
+import model.Goal;
 import model.Measure;
 
 public class MeasureDao extends DaoJpaImpl<Measure, Integer> {
@@ -19,6 +20,14 @@ public class MeasureDao extends DaoJpaImpl<Measure, Integer> {
 				Measure.class).getResultList();
 		closeConnections(entityManager);
 		return list;
+	}
+	
+	public List<Measure> readAllByPerson(int personId) {
+		EntityManager entityManager = createEntityManager();
+	    List<Measure> list = entityManager.createNamedQuery("Measure.findByPerson", Measure.class)
+	    		.setParameter("pId", personId).getResultList();
+	    closeConnections(entityManager);
+	    return list;
 	}
 
 	public List<Measure> readAllByPersonAndDefinition(int personId, int measureDefinitionId) {

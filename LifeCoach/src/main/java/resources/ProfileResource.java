@@ -7,6 +7,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import model.Goal;
@@ -18,7 +19,7 @@ import model.dao.MeasureDao;
 import model.dao.MeasureDefinitionDao;
 import model.dao.PersonDao;
 
-@Path("/person/{id}/profile/{profileType}/")
+@Path("/person/{id}/profile/")
 public class ProfileResource {
 	private final PersonDao personDao = PersonDao.getInstance();
 	private final MeasureDao measureDao = MeasureDao.getInstance();
@@ -29,13 +30,18 @@ public class ProfileResource {
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	@Path("measures")
-	public List<Measure> readProfile(@PathParam("id") int personId,
-			@PathParam("profileType") String profileType) {
+	public List<Measure> readProfileMeasures(@PathParam("id") int personId,
+			@QueryParam("profileType") String profileType) {
 		Person p = personDao.read(personId);
 		if (p == null) {
-			//TODO check ??better to return always a Reponse (with incorporated object)
 			return null;
 		}		
+		
+		//TODO check if empty is the case
+		if (profileType == null || profileType.isEmpty()){
+			return measureDao.readAllByPerson(personId);
+		}
+		
 		List<Measure> profile = measureDao.readPersonProfile(personId, profileType);
 		return profile;
 	}
@@ -43,15 +49,15 @@ public class ProfileResource {
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	@Path("goals")
-	public List<Goal> readAllGoals(@PathParam("id") int personId,
-			@PathParam("profileType") String profileType) {
-		//TODO check
+	public List<Goal> readProfileGoals(@PathParam("id") int personId,
+			@QueryParam("profileType") String profileType) {
 		Person p = personDao.read(personId);
 		if (p == null) {
 			return null;
 		}
 		
-		if (profileType == null){
+		//TODO check if empty is the case
+		if (profileType == null || profileType.isEmpty()){
 			return goalDao.readAllByPerson(personId);
 		}
 		

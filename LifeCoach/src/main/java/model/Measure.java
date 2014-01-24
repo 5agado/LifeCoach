@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 @Table(name="Measure")
 @NamedQueries({
 	@NamedQuery(name="Measure.findAll", query="SELECT m FROM Measure m"),
+	@NamedQuery(name="Measure.findByPerson", query="SELECT m FROM Measure m WHERE m.person.personId = :pId"),
 	@NamedQuery(name="Measure.findByPersonAndDefinition", query="SELECT m FROM Measure m WHERE m.person.personId = :pId "
 			+ "AND m.measureDefinition.measureDefId = :mDefId"),
 })

@@ -1,6 +1,6 @@
 package client;
 
-import healthProfile.HealthProfile;
+import healthProfile.model.HealthProfile;
 
 import java.net.MalformedURLException;
 

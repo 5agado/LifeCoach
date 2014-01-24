@@ -1,4 +1,4 @@
-package healthProfile;
+package healthProfile.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;

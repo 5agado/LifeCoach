@@ -3,46 +3,51 @@ package client;
 import java.io.StringReader;
 import java.util.List;
 
+import javax.ws.rs.core.MultivaluedMap;
+
 import model.Goal;
 import model.Measure;
+import model.Person;
 import util.Serializer;
 
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 public class ProfileClient extends RESTClient {
+	private static final String PROFILE_TYPE_QUERY_NAME = "profileType";
 
+	//TODO better use of ClientResponse
 	public ProfileClient(String requestUrl) {
 		super(requestUrl);
 	}
 
 	//We didn't retrive the measureDef complete info (e.g defId), instead we used directly the measure name
 	public void createMeasure(Measure measure, int personId) {
-		String measureInput = Serializer.marshalString(measure);
-		String response = executePOSTWithRequestEntity("person/" + personId + "/"
-				+ measure.getMeasureDefinition().getMeasureName(), measureInput);
+		String measureInput = Serializer.marshalAsString(measure);
+		executePOSTWithRequestEntity("person/" + personId + "/" + measure.getMeasureDefinition().getMeasureName(), measureInput);
+		//String response = extractEntityAsString(executePOSTWithRequestEntity("person/" + personId + "/"
+				//+ measure.getMeasureDefinition().getMeasureName(), measureInput));
+	}
+	
+	public Person readPerson(int personId){
+		ClientResponse response = executeGET("/person/" + personId, new MultivaluedMapImpl());
+		Person person = extractEntity(response, Person.class);
+		return person;
 	}
 	
 	public List<Measure> readProfile(int personId, String profileType){
-		String stringProfile = readProfileAsString(personId, profileType); 
-		StringReader reader = new StringReader(stringProfile);
-		List<Measure> profile = Serializer.unmarshalWrapper(Measure.class, reader);
-		return profile;
-	}
-	
-	public String readProfileAsString(int personId, String profileType){
-		String profile = executeGET("/person/" + personId + "/profile/" + profileType + "/measures", new MultivaluedMapImpl()); 
+		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl(); 
+		queryParams.add(PROFILE_TYPE_QUERY_NAME, profileType);
+		ClientResponse response = executeGET("/person/" + personId + "/profile/measures", queryParams);
+		List<Measure> profile = extractEntityWrapper(response, Measure.class);
 		return profile;
 	}
 	
 	public List<Goal> readProfileGoals(int personId, String profileType){
-		String stringGoals = readProfileGoalsAsString(personId, profileType); 
-		StringReader reader = new StringReader(stringGoals);
-		List<Goal> goals = Serializer.unmarshalWrapper(Goal.class, reader);
-		return goals;
-	}
-	
-	public String readProfileGoalsAsString(int personId, String profileType){
-		String goals = executeGET("/person/" + personId + "/profile/" + profileType + "goals", new MultivaluedMapImpl()); 
+		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl(); 
+		queryParams.add(PROFILE_TYPE_QUERY_NAME, profileType);
+		ClientResponse response = executeGET("/person/" + personId + "/profile/goals", queryParams);
+		List<Goal> goals = extractEntityWrapper(response, Goal.class);
 		return goals;
 	}
 }

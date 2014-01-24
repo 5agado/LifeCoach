@@ -1,5 +1,7 @@
 package healthProfile;
 
+import healthProfile.model.HealthProfile;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;

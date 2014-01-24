@@ -10,10 +10,12 @@ import java.util.logging.Level;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.parsers.ParserConfigurationException;
 
 import model.Measure;
 
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import util.XMLAdapter;
 
@@ -23,7 +25,7 @@ public class TestHealthProfileAdapter {
 	public TestHealthProfileAdapter() throws IOException {
 		try {
 			adapter = new HealthProfileAdapter("blood", 2);
-		} catch (IOException e) {
+		} catch (IOException | SAXException | ParserConfigurationException e) {
 			System.out.println("No such profile type or person ID" + e.getLocalizedMessage());
 			assertNotNull("No such profile type or person ID", null);
 		}
@@ -47,7 +49,7 @@ public class TestHealthProfileAdapter {
 	
 	@Test
 	public void readLevels() {
-		String level = adapter.readReferenceLevelAsString("leucociti");
+		String level = adapter.readReferenceLevelFor("leucociti");
 		System.out.println(level);
 	}
 	

@@ -6,12 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.parsers.ParserConfigurationException;
 
 import model.Measure;
 import model.MeasureDefinition;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import util.Serializer;
 import util.XMLAdapter;
@@ -26,7 +28,7 @@ public class HealthProfileAdapter {
 	private XMLAdapter levelsAdapter;
 	private XMLAdapter adviceAdapter;
 	
-	public HealthProfileAdapter(String profileType, int personId) throws IOException {
+	public HealthProfileAdapter(String profileType, int personId) throws IOException, SAXException, ParserConfigurationException {
 		profileAdapter = new XMLAdapter(INFO_FILES_PATH + profileType + "_" + PROFILE_FILENAME + "_" + personId + STD_FILE_EXTENSION);
 		levelsAdapter = new XMLAdapter(INFO_FILES_PATH + profileType + "_" + LEVELS_FILENAME + STD_FILE_EXTENSION);
 		adviceAdapter = new XMLAdapter(INFO_FILES_PATH + profileType + "_" + ADVICE_FILENAME + STD_FILE_EXTENSION);
@@ -54,27 +56,22 @@ public class HealthProfileAdapter {
         return list;
 	}
 	
-	public XMLevel readReferenceLevelFor(String measureName) {
+	public String readReferenceLevelFor(String measureName) {
 		Node node = (Node) levelsAdapter.readNode("/ref_levels/level[measureName='" + measureName + "']");
 		if (node == null){
-			return new XMLevel();
+			return null;
 		}
 		XMLevel level = (XMLevel) Serializer.unmarshal(XMLevel.class, node);
-        return level;
+        return level.toString();
 	}
 	
 	public String readAdviceFor(String measureName) {
 		Node node = (Node) adviceAdapter.readNode("/advice_list/advice[measureName='" + measureName + "']");
 		if (node == null){
-			return "";
+			return null;
 		}
 		XMLAdvice advice = (XMLAdvice) Serializer.unmarshal(XMLAdvice.class, node);
         return advice.getContent();
-	}
-	
-	public String readReferenceLevelAsString(String measureName) {
-		XMLevel level = readReferenceLevelFor(measureName);
-		return level.toString();
 	}
 	
 	//Check if the current loaded XML database is up to date, or if it
@@ -85,13 +82,13 @@ public class HealthProfileAdapter {
 	}
 	
 	//Set the current loaded XML database as up to date, generally
-	//because we have read it and updated the value in local database 
+	//because we have read it and updated the value in remote database 
 	public void setUpToDate() {
 		profileAdapter.setAttributeValue("/measures/@updated", String.valueOf(true));
 	}
 	
 	@XmlRootElement(name = "measure")
-	private static class XMLMeasure {
+	protected static class XMLMeasure {
 		private String measureName;
 		private String value;
 		
@@ -110,7 +107,7 @@ public class HealthProfileAdapter {
 	}
 	
 	@XmlRootElement(name = "level")
-	private static class XMLevel {
+	protected static class XMLevel {
 		private String measureName;
 		private String min;
 		private String max;
@@ -141,7 +138,7 @@ public class HealthProfileAdapter {
 	}
 	
 	@XmlRootElement(name = "advice")
-	private static class XMLAdvice {
+	protected static class XMLAdvice {
 		private String measureName;
 		private String content;
 		

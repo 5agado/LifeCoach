@@ -37,6 +37,9 @@ Data Model view shows the organization of entities in a database.
 
 !!??measureName unique??
 
+#MODEL
+??Using Joda Time
+
 #ANNOTATIONS
 ??How to represent the measures: in some case is ok the minimal, but in other (like the profile) its better
 to have the measure name, but it doesn't look good to have all the measuredefinition object
@@ -50,3 +53,11 @@ to have the measure name, but it doesn't look good to have all the measuredefini
 #MODEL
 !!No sharing of models between services: BloodProfile should define its own Profile model, 
 and extract the useful data from the XML response, or even define is new Measure model
+
+
+#SECONDARY TODO
+??Eternalize method to check person and definition validity in the DAO
+??Return alwat a Response for the REST methods, instead of the type (and NULL, that works as 204)
+??Use and check the type (as defined in the DB) of the values of the various model (e.g. Measure.value)
+??ON DELETER Cascade DATABASE
+??Add generics extraction for REST client

@@ -1,5 +1,6 @@
 package resources;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -14,12 +15,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import model.Goal;
+import model.MeasureDefinition;
 import model.Person;
+import model.dao.GoalDao;
 import model.dao.PersonDao;
 
 @Path("/person/")
 public class PersonResource {
 	private final PersonDao personDao = PersonDao.getInstance();
+	private final GoalDao goalDao = GoalDao.getInstance();
 	
 	@GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})

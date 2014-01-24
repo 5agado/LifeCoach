@@ -1,10 +1,15 @@
 package util;
 
+import healthProfile.HealthProfileServicePublisher;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -20,6 +25,8 @@ import model.ListWrapper;
 import org.w3c.dom.Node;
 
 public class Serializer {
+	private final static Logger LOGGER = Logger.getLogger(Serializer.class.getName());
+	
 	private Serializer() {
 		throw new AssertionError();
 	}
@@ -31,13 +38,12 @@ public class Serializer {
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			marshaller.marshal(obj, out);
 		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getLocalizedMessage());
 		}
 		
 	}
 	
-	public static <T> String marshalString(T obj) {
+	public static <T> String marshalAsString(T obj) {
 		try {
 			JAXBContext context = JAXBContext.newInstance(obj.getClass());
 			StringWriter sw = new StringWriter();
@@ -46,24 +52,26 @@ public class Serializer {
 			marshaller.marshal(obj, sw);
 			return sw.toString();
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getLocalizedMessage());
+			return "";
 		}
-		return "";
 	}
 	
-	public static <T> T unmarshal(Class<T> objClass, Reader reader) {
+	@SuppressWarnings("unchecked")
+	public static <T> T unmarshal(Class<T> objClass, String obj) {
 		try {
 			JAXBContext context = JAXBContext.newInstance(objClass);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
+			StringReader reader = new StringReader(obj);
 			T res = (T) unmarshaller.unmarshal(reader);
 			return res;
 		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
+			LOGGER.log(Level.SEVERE, e.getLocalizedMessage());
+			return (T) new Object();
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static <T> T unmarshal(Class<T> objClass, Node node) {
 		try {
 			JAXBContext context = JAXBContext.newInstance(objClass);
@@ -71,23 +79,23 @@ public class Serializer {
 			T res = (T) unmarshaller.unmarshal(node);
 			return res;
 		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
+			LOGGER.log(Level.SEVERE, e.getLocalizedMessage());
+			return (T) new Object();
 		}
 	}
 	
-	public static <T> List<T> unmarshalWrapper(Class<T> objClass, Reader reader) {
+	@SuppressWarnings("unchecked")
+	public static <T> List<T> unmarshalWrapper(Class<T> objClass, String obj) {
 		try {
 			JAXBContext context = JAXBContext.newInstance(objClass, ListWrapper.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
+			StringReader reader = new StringReader(obj);
 			StreamSource source = new StreamSource(reader);
 			ListWrapper<T> wrapper = (ListWrapper<T>) unmarshaller.unmarshal(source, ListWrapper.class).getValue();
 			return wrapper.getItems();
 		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
+			LOGGER.log(Level.SEVERE, e.getLocalizedMessage());
+			return (List<T>) new ListWrapper<T>();
 		}
     }
 	
@@ -96,13 +104,12 @@ public class Serializer {
 			JAXBContext jaxbContext = JAXBContext.newInstance(objClasses);
 			SchemaOutputResolver sor = new MySchemaOutputResolver();
 			jaxbContext.generateSchema(sor);
-			sor.createOutput("src/main/resources", "tmp.xsd");
 		} catch (JAXBException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getLocalizedMessage());
 		}
 	}
 	
+	//Helper class for output schema generation
 	private static class MySchemaOutputResolver extends SchemaOutputResolver {
 		public Result createOutput(String namespaceURI, String suggestedFileName) throws IOException {
 	        File file = new File(suggestedFileName);

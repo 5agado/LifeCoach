@@ -10,8 +10,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import lifeCoach.model.LifeCoachReport;
 import model.Goal;
 import model.Measure;
+import model.Person;
 import client.ProfileClient;
 import client.QuotesClient;
 
@@ -26,11 +28,16 @@ public class LifeCoachResource {
 	public LifeCoachReport readPersonReport(@PathParam("id") int personId, @QueryParam("profileType") String profileType) {
 		LifeCoachReport report = new LifeCoachReport();
 		
-		if (profileType == null){
-			//TODO
-			return report;
+		Person person = client.readPerson(personId);
+		if (person == null){
+			return null;
 		}
 		
+		if (profileType == null){
+			profileType = "";
+		}
+		
+		//TODO management of wrong response (null)
 		List<Measure> measures = client.readProfile(personId, profileType);
 		report.setMeasures(measures);
 		

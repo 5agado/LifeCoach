@@ -1,5 +1,6 @@
 package resources;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -22,7 +23,6 @@ import model.dao.GoalDao;
 import model.dao.MeasureDefinitionDao;
 import model.dao.PersonDao;
 
-//??Better goal and ?measure=
 @Path("/person/{id}/{measure}/goal/")
 public class GoalResource {
 	private final PersonDao personDao = PersonDao.getInstance();
@@ -34,7 +34,6 @@ public class GoalResource {
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public List<Goal> readAllGoals(@PathParam("id") int personId,
 			@PathParam("measure") String measureName) {
-		//TODO check
 		Person p = personDao.read(personId);
 		if (p == null) {
 			return null;
@@ -62,12 +61,10 @@ public class GoalResource {
 		if (list.isEmpty()) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
-		//TODO set current date
-		//also check for update
+		goal.setTimestamp(new Date());
 		goal.setMeasureDefinition(list.get(0));
 		goal.setPerson(p);
 		goal.setGoalId(0);
-		// TODO check value type
 		goal = goalDao.create(goal);
 		if (goal != null)
 			return Response.ok(goal, MediaType.APPLICATION_XML).build();
@@ -81,7 +78,6 @@ public class GoalResource {
 	public Goal readGoal(@PathParam("id") int personId,
 			@PathParam("measure") String measureName,
 			@PathParam("gid") int goalId) {
-		//TODO check
 		Person p = personDao.read(personId);
 		if (p == null) {
 			return null;
@@ -98,7 +94,7 @@ public class GoalResource {
 	@PUT
 	@Path("{gid}")
 	@Consumes@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response updateGoal(Measure measure,
+	public Response updateGoal(Goal goal,
 			@PathParam("id") int personId,
 			@PathParam("measure") String measureName,
 			@PathParam("gid") int goalId) {
@@ -115,7 +111,11 @@ public class GoalResource {
 		if (g == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
-		g.setGoalId(goalId);
+		
+		//Here we decided to keep the previous timestamp
+		//i.e.: when the goal we are going to modify has been created
+		goal.setTimestamp(g.getTimestamp());
+		goal.setGoalId(goalId);
 		goalDao.update(g);
 		return Response.ok(g, MediaType.APPLICATION_XML).build();
 	}
