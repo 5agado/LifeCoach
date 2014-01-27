@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import model.Goal;
 import model.Measure;
 
 public class MeasureDao extends DaoJpaImpl<Measure, Integer> {

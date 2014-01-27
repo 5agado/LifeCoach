@@ -1,6 +1,7 @@
 package lifeCoach.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -9,61 +10,60 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import model.Goal;
-import model.Measure;
+import model.Person;
 
 @XmlRootElement
 @XmlAccessorType (XmlAccessType.FIELD)
-@XmlType(propOrder = {"measures", "goals", "goalsStates", "suggestions", "motivational" })
+@XmlType(propOrder = {"timestamp", "person", "measures", "statistics", "motivational" })
 public class LifeCoachReport implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	@XmlElement(name = "measure")
-	private List<Measure> measures;
+	@XmlElement(name = "date")
+	private Date timestamp;
 	
-	@XmlElement(name = "goal")
-	private List<Goal> goals;
-	
-	private List<String> goalsStates;
+	private Person person;
 
-	private String suggestions;
+	@XmlElement(name = "measure")
+	private List<LifeCoachMeasure> measures;
 	
+	private LifeCoachReportStatistics statistics;
+
 	private String motivational;
 	
 	public LifeCoachReport() {
-		// TODO Auto-generated constructor stub
+	
+	}
+	
+	public Date getTimestamp() {
+		return timestamp;
 	}
 
-	public List<Measure> getMeasures() {
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
+	}
+
+	public Person getPerson() {
+		return person;
+	}
+
+	public void setPerson(Person person) {
+		this.person = person;
+	}
+
+	public List<LifeCoachMeasure> getMeasures() {
 		return measures;
 	}
 
-	public void setMeasures(List<Measure> measures) {
+	public void setMeasures(List<LifeCoachMeasure> measures) {
 		this.measures = measures;
 	}
 	
-	public List<String> getGoalsStates() {
-		return goalsStates;
+	public LifeCoachReportStatistics getStatistics() {
+		return statistics;
 	}
 
-	public void setGoalsStates(List<String> goalsStates) {
-		this.goalsStates = goalsStates;
-	}
-
-	public List<Goal> getGoals() {
-		return goals;
-	}
-
-	public void setGoals(List<Goal> goals) {
-		this.goals = goals;
-	}
-
-	public String getSuggestions() {
-		return suggestions;
-	}
-
-	public void setSuggestions(String suggestions) {
-		this.suggestions = suggestions;
+	public void setStatistics(LifeCoachReportStatistics statistics) {
+		this.statistics = statistics;
 	}
 
 	public String getMotivational() {

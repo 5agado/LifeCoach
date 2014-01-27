@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"measureDefId", "measureName", "measureType", "profileType"})
+@XmlType(propOrder = {"measureDefId", "measureName", "profileType"})
 @Entity
 @Table(name="MeasureDefinition")
 @NamedQueries({
@@ -43,6 +43,7 @@ public class MeasureDefinition implements Serializable {
 	@Column(name="measureName")
 	private String measureName;
 
+	@XmlTransient
 	@Column(name="measureType")
 	private String measureType;
 

@@ -1,6 +1,5 @@
 package client;
 
-import java.io.StringReader;
 import java.util.List;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -16,7 +15,6 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 public class ProfileClient extends RESTClient {
 	private static final String PROFILE_TYPE_QUERY_NAME = "profileType";
 
-	//TODO better use of ClientResponse
 	public ProfileClient(String requestUrl) {
 		super(requestUrl);
 	}
@@ -26,7 +24,7 @@ public class ProfileClient extends RESTClient {
 		String measureInput = Serializer.marshalAsString(measure);
 		executePOSTWithRequestEntity("person/" + personId + "/" + measure.getMeasureDefinition().getMeasureName(), measureInput);
 		//String response = extractEntityAsString(executePOSTWithRequestEntity("person/" + personId + "/"
-				//+ measure.getMeasureDefinition().getMeasureName(), measureInput));
+		//+ measure.getMeasureDefinition().getMeasureName(), measureInput));
 	}
 	
 	public Person readPerson(int personId){
@@ -47,6 +45,12 @@ public class ProfileClient extends RESTClient {
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl(); 
 		queryParams.add(PROFILE_TYPE_QUERY_NAME, profileType);
 		ClientResponse response = executeGET("/person/" + personId + "/profile/goals", queryParams);
+		List<Goal> goals = extractEntityWrapper(response, Goal.class);
+		return goals;
+	}
+	
+	public List<Goal> readGoalsByMeasure(int personId, String measure){
+		ClientResponse response = executeGET("/person/" + personId + "/" + measure + "/goal", new MultivaluedMapImpl());
 		List<Goal> goals = extractEntityWrapper(response, Goal.class);
 		return goals;
 	}

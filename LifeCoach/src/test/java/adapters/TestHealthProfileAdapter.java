@@ -5,7 +5,6 @@ import healthProfile.HealthProfileAdapter;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -16,8 +15,6 @@ import model.Measure;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
-
-import util.XMLAdapter;
 
 public class TestHealthProfileAdapter {
 	HealthProfileAdapter adapter;

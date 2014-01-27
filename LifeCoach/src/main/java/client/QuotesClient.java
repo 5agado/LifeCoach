@@ -12,7 +12,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import util.XMLAdapter;
+import util.XMLParser;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
@@ -77,14 +77,14 @@ public class QuotesClient extends RESTClient {
 		String res = response.getEntity(String.class);
 		String quote = extractElement(res, XML_QUOTE_ELEMENT);
 		String author = extractElement(res, XML_AUTHOR_ELEMENT);
-		return quote + " " + author;
+		return "\"" + quote + "\" " + author;
 	}
 	
 	private String extractElement(String response, String elementName) {
 		InputStream input = new ByteArrayInputStream(response.getBytes(StandardCharsets.UTF_8));
-		XMLAdapter adapter;
+		XMLParser adapter;
 		try {
-			adapter = new XMLAdapter(input);
+			adapter = new XMLParser(input);
 			String value = adapter.getAttributeValue(".//" + elementName);
 			return value;
 		} catch (SAXException | IOException | ParserConfigurationException e) {

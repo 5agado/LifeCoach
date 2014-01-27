@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"goalId", "description", "comparator", "value", "expDate"})
+@XmlType(propOrder = {"goalId", "description", "comparator", "value", "expDate", "timestamp"})
 @Entity
 @Table(name = "Goal")
 @NamedQueries({
@@ -54,7 +54,6 @@ public class Goal implements Serializable {
 	@Column(name = "goalId")
 	private int goalId;
 
-	@XmlTransient
 	@Temporal(TemporalType.DATE)
 	@Column(name = "timestamp")
 	private Date timestamp;

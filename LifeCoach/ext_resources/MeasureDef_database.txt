@@ -1,0 +1,23 @@
+-- Blood Profile
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('leucociti', 'double', 'blood');
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('eritrociti', 'double', 'blood');
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('emoglobina', 'double', 'blood');
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('ematocrito', 'double', 'blood');
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('piastrine', 'double', 'blood');
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('glicemia', 'double', 'blood');
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('trigliceridi', 'double', 'blood');
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('colesterolo', 'double', 'blood');
+
+-- LifeStyle Profile
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('weight', 'double', 'lifestyle');
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('height', 'double', 'lifestyle');
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('steps', 'integer', 'lifestyle');
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('calories', 'double', 'lifestyle');
+
+-- CrossFit Profile
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('airSquat', 'integer', 'crossfit');
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('overheadSquat', 'integer', 'crossfit');
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('shoulderPress', 'integer', 'crossfit');
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('pushPress', 'integer', 'crossfit');
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('deadlift', 'integer', 'crossfit');
+INSERT INTO [MeasureDefinition] ([measureName], [measureType], [profileType]) VALUES ('highPull', 'integer', 'crossfit');

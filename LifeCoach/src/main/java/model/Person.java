@@ -33,6 +33,8 @@ public class Person implements Serializable {
 
 	@Temporal(TemporalType.DATE)
 	@Column(name="birthdate")
+	//@Converter(name = "dateTimeConverter", converterClass = util.JodaDateTimeConverter.class)
+	//@Convert("dateTimeConverter")
 	private Date birthdate;
 
 	@Column(name="email")

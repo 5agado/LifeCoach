@@ -1,4 +1,8 @@
-!!EclipseLink seems of, no need for Hibernate or others
+!!Expose a service for the HealthProfile in order to retrieve or upload a file resource
+
+
+
+!!EclipseLink seems ok, no need for Hibernate or others
 
 !!Modulation, portability and Extensibility, evolvability, flexibility, interoperability
 (secondary) !!performance, modifiability, reliability, usability, security
@@ -60,4 +64,7 @@ and extract the useful data from the XML response, or even define is new Measure
 ??Return alwat a Response for the REST methods, instead of the type (and NULL, that works as 204)
 ??Use and check the type (as defined in the DB) of the values of the various model (e.g. Measure.value)
 ??ON DELETER Cascade DATABASE
-??Add generics extraction for REST client
+TODO do comparison also with measureDate for statistic
+TODO expose adapter as a service
+TODO check RESTCLient validity with JSON too
+TODO Consider case more goals per measure

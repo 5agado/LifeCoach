@@ -37,7 +37,6 @@ public class ProfileResource {
 			return null;
 		}		
 		
-		//TODO check if empty is the case
 		if (profileType == null || profileType.isEmpty()){
 			return measureDao.readAllByPerson(personId);
 		}
@@ -56,7 +55,6 @@ public class ProfileResource {
 			return null;
 		}
 		
-		//TODO check if empty is the case
 		if (profileType == null || profileType.isEmpty()){
 			return goalDao.readAllByPerson(personId);
 		}

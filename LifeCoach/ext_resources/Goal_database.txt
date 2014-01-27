@@ -1,14 +1,13 @@
 INSERT INTO [Goal] ([description], [value], [comparator], [expDate], [timestamp], [measureDefId], [personId]) 
-	VALUES ('leucociti', '10', 'minor', '2014-03-01 00:00:00', '2014-01-10 00:00:00', '5', '2');
+	VALUES ('leucociti', '10', '<', '2014-03-01 00:00:00', '2014-01-10 00:00:00', '5', '2');
 INSERT INTO [Goal] ([description], [value], [comparator], [expDate], [timestamp], [measureDefId], [personId]) 
-	VALUES ('emoglobina', '10', 'minor', '2014-03-01 00:00:00', '2014-01-10 00:00:00', '6', '2');
+	VALUES ('emoglobina', '10', '<', '2014-03-01 00:00:00', '2014-01-10 00:00:00', '6', '2');
 INSERT INTO [Goal] ([description], [value], [comparator], [expDate], [timestamp], [measureDefId], [personId]) 
-	VALUES ('ematocrito', '10', 'greater', '2014-01-11 00:00:00', '2014-01-10 00:00:00', '7', '2');
+	VALUES ('ematocrito', '10', '>', '2014-01-11 00:00:00', '2014-01-10 00:00:00', '7', '2');
 INSERT INTO [Goal] ([description], [value], [comparator], [expDate], [timestamp], [measureDefId], [personId]) 
-	VALUES ('piastrine', '100', 'minor', '2014-03-01 00:00:00', '2014-01-10 00:00:00', '8', '2');
+	VALUES ('piastrine', '100', '<', '2014-03-01 00:00:00', '2014-01-10 00:00:00', '8', '2');
 INSERT INTO [Goal] ([description], [value], [comparator], [expDate], [timestamp], [measureDefId], [personId]) 
-	VALUES ('glicemia', '10', 'minor', '2014-07-01 00:00:00', '2014-01-10 00:00:00', '9', '2');
+	VALUES ('glicemia', '10', '<', '2014-07-01 00:00:00', '2014-01-10 00:00:00', '9', '2');
 INSERT INTO [Goal] ([description], [value], [comparator], [expDate], [timestamp], [measureDefId], [personId]) 
-	VALUES ('colesterolo', '10', 'minor', '2014-03-01 00:00:00', '2014-01-10 00:00:00', '10', '2');
-
+	VALUES ('colesterolo', '10', '<', '2014-03-01 00:00:00', '2014-01-10 00:00:00', '10', '2');
 

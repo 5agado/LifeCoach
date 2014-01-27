@@ -1,7 +1,5 @@
 package util;
 
-import healthProfile.HealthProfileServiceImpl;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,20 +25,20 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class XMLAdapter {
-	private final static Logger LOGGER = Logger.getLogger(XMLAdapter.class
+public class XMLParser {
+	private final static Logger LOGGER = Logger.getLogger(XMLParser.class
 			.getName());
 	private Document database = null;
 	private XPath xpath = null;
 	private String sourceUri = null;
 
-	public XMLAdapter(String sourceURI) throws IOException, SAXException,
+	public XMLParser(String sourceURI) throws IOException, SAXException,
 			ParserConfigurationException {
 		this.sourceUri = sourceURI;
 		initXmlTools(sourceURI);
 	}
 
-	public XMLAdapter(InputStream streamSource) throws SAXException,
+	public XMLParser(InputStream streamSource) throws SAXException,
 			IOException, ParserConfigurationException {
 		initXmlToolsForStream(streamSource);
 	}

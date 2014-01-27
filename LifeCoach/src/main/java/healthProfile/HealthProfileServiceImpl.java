@@ -13,10 +13,7 @@ public class HealthProfileServiceImpl implements HealthProfileServiceInterface {
 	}
 
 	@Override
-	public HealthProfile readPersonHealthProfile(int personId, String profileType) {
-		
-		//TODO check person and profile existence
-		
+	public HealthProfile readPersonHealthProfile(int personId, String profileType) {		
 		HealthProfile profile = helper.readPersonHealthProfile(personId, profileType);
 		return profile;
 	}

@@ -16,7 +16,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import model.Goal;
-import model.Measure;
 import model.MeasureDefinition;
 import model.Person;
 import model.dao.GoalDao;

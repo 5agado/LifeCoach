@@ -1,31 +1,25 @@
-<?xml version="1.0"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	
-	<xs:complexType name="personType">
-		<xs:sequence>
-			<xs:element name="personId" type="xs:integer"/>
-			<xs:element name="firstname" type="xs:string"/>
-			<xs:element name="lastname" type="xs:string"/>
-			<xs:element name="birthdate" type="xs:dateTime"/>
-			<xs:element name="email" type="xs:string"/>
-		</xs:sequence>
-	</xs:complexType>
-	
-	<xs:complexType name="measureDefinitionType">
-		<xs:sequence>
-			<xs:element name="measureDefId" type="xs:integer"/>
-			<xs:element name="measureName" type="xs:string"/>
-			<xs:element name="measureType" type="xs:string"/>
-			<xs:element name="profileType" type="xs:string"/>
-		</xs:sequence>
-	</xs:complexType>
-	
-	<xs:complexType name="measureType">
-		<xs:sequence>
-			<xs:element name="measureId" type="xs:integer"/>
-			<xs:element name="value" type="xs:string"/>
-		</xs:sequence>
-	</xs:complexType>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="goal" type="goal"/>
+
+  <xs:element name="healthMeasure" type="healthMeasure"/>
+
+  <xs:element name="healthProfile" type="healthProfile"/>
+
+  <xs:element name="healthProfileSuggestions" type="healthProfileSuggestions"/>
+
+  <xs:element name="lifeCoachMeasure" type="lifeCoachMeasure"/>
+
+  <xs:element name="lifeCoachReport" type="lifeCoachReport"/>
+
+  <xs:element name="lifeCoachReportStatistics" type="lifeCoachReportStatistics"/>
+
+  <xs:element name="measure" type="measure"/>
+
+  <xs:element name="measureDefinition" type="measureDefinition"/>
+
+  <xs:element name="person" type="person"/>
 
   <xs:complexType name="goal">
     <xs:sequence>
@@ -34,9 +28,99 @@
       <xs:element name="comparator" type="xs:string" minOccurs="0"/>
       <xs:element name="value" type="xs:string" minOccurs="0"/>
       <xs:element name="expDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="timestamp" type="xs:dateTime" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
-  
-	<xs:element name="goal" type="goal"/>
-	
+
+  <xs:complexType name="measure">
+    <xs:sequence>
+      <xs:element name="measureId" type="xs:int"/>
+      <xs:element name="value" type="xs:string" minOccurs="0"/>
+      <xs:element name="timestamp" type="xs:dateTime" minOccurs="0"/>
+      <xs:element ref="measureDefinition" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="measureDefinition">
+    <xs:sequence>
+      <xs:element name="measureDefId" type="xs:int"/>
+      <xs:element name="measureName" type="xs:string" minOccurs="0"/>
+      <xs:element name="profileType" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="person">
+    <xs:sequence>
+      <xs:element name="personId" type="xs:int"/>
+      <xs:element name="firstname" type="xs:string" minOccurs="0"/>
+      <xs:element name="lastname" type="xs:string" minOccurs="0"/>
+      <xs:element name="birthdate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="email" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="listWrapper">
+    <xs:sequence>
+      <xs:any processContents="lax" namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="healthProfile">
+    <xs:sequence>
+      <xs:element name="date" type="xs:dateTime" minOccurs="0"/>
+      <xs:element ref="person" minOccurs="0"/>
+      <xs:element name="measure" type="healthMeasure" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="suggestions" type="healthProfileSuggestions" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="healthMeasure">
+    <xs:sequence>
+      <xs:element name="measureName" type="xs:string" minOccurs="0"/>
+      <xs:element name="value" type="xs:string" minOccurs="0"/>
+      <xs:element name="refLevel" type="xs:string" minOccurs="0"/>
+      <xs:element name="warning" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="healthProfileSuggestions">
+    <xs:sequence>
+      <xs:element name="allMeasure_number" type="xs:int"/>
+      <xs:element name="detailedMeasure_number" type="xs:int"/>
+      <xs:element name="low_warnings" type="xs:int"/>
+      <xs:element name="medium_warnings" type="xs:int"/>
+      <xs:element name="high_warnings" type="xs:int"/>
+      <xs:element name="overall_illness_level" type="xs:int"/>
+      <xs:element name="advice" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="lifeCoachMeasure">
+    <xs:sequence>
+      <xs:element name="measureName" type="xs:string" minOccurs="0"/>
+      <xs:element name="value" type="xs:string" minOccurs="0"/>
+      <xs:element ref="goal" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="goalStatus" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="lifeCoachReport">
+    <xs:sequence>
+      <xs:element name="date" type="xs:dateTime" minOccurs="0"/>
+      <xs:element ref="person" minOccurs="0"/>
+      <xs:element name="measure" type="lifeCoachMeasure" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="statistics" type="lifeCoachReportStatistics" minOccurs="0"/>
+      <xs:element name="motivational" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="lifeCoachReportStatistics">
+    <xs:sequence>
+      <xs:element name="goals_number" type="xs:int"/>
+      <xs:element name="successes" type="xs:int"/>
+      <xs:element name="failures" type="xs:int"/>
+      <xs:element name="still_in_progress" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
 </xs:schema>
+

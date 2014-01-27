@@ -70,15 +70,15 @@ public class MeasureDefinitionResource {
 	
 	@DELETE
     @Path("{id}")
-	public Response deleteMeasureDefinition(@PathParam("mid") int measureId) {
-		MeasureDefinition mDef = measureDefinitionDao.read(measureId);
+	public Response deleteMeasureDefinition(@PathParam("id") int id) {
+		MeasureDefinition mDef = measureDefinitionDao.read(id);
 		if (mDef == null){
 			return Response.status(Status.NOT_FOUND).build();
 		}
 		else{
 			measureDefinitionDao.delete(mDef);
 		}
-		mDef = measureDefinitionDao.read(measureId);
+		mDef = measureDefinitionDao.read(id);
 		if (mDef == null){
 			return Response.ok().build();
 		}

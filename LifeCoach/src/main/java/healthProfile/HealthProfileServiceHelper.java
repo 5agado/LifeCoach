@@ -2,11 +2,9 @@ package healthProfile;
 
 import healthProfile.model.HealthMeasure;
 import healthProfile.model.HealthProfile;
+import healthProfile.model.HealthProfileSuggestions;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -17,19 +15,19 @@ import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 
 import model.Measure;
+import model.Person;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import util.Serializer;
-import util.XMLAdapter;
 import client.ProfileClient;
 
 public class HealthProfileServiceHelper {
 	private final static String WARNING_LOW = "*";
 	private final static String WARNING_MEDIUM = "**";
 	private final static String WARNING_HIGH = "***";
+	private final static int ILLNESS_WARNING_LOW = 1;
+	private final static int ILLNESS_WARNING_MEDIUM = 2;
+	private final static int ILLNESS_WARNING_HIGH = 4;
 	private final static Logger LOGGER = Logger.getLogger(HealthProfileServiceHelper.class.getName());
 	
 	private ProfileClient client = new ProfileClient("http://localhost:8080/SDE_Final_Project/rest");
@@ -42,7 +40,18 @@ public class HealthProfileServiceHelper {
 	public HealthProfile readPersonHealthProfile(int personId, String profileType) {		
 		HealthProfile profile = new HealthProfile();
 		
-		//TODO expose adapter as a service
+		if (profileType == null || profileType.isEmpty()){
+			return null;
+		}
+		
+		Person person = client.readPerson(personId);
+		if (person == null){
+			return null;
+		}
+		
+		profile.setPerson(person);
+		profile.setTimestamp(new Date());
+		
 		try {
 			adapter = new HealthProfileAdapter(profileType, personId);
 		} catch (IOException e) {
@@ -60,22 +69,19 @@ public class HealthProfileServiceHelper {
 			updateRemoteMeasures(personId);
 		}
 		
-		//TODO management of wrong response (null)
 		List<Measure> remoteMeasures = client.readProfile(personId, profileType);
 		
-		List<HealthMeasure> healthMeasures = computeAndGetMeasuresFrom(remoteMeasures);
-		
-		if (healthMeasures.isEmpty()){
+		if (remoteMeasures == null || remoteMeasures.isEmpty()){
 			return profile;
 		}
 		
+		List<HealthMeasure> healthMeasures = computeAndGetMeasuresFrom(remoteMeasures);
+		
 		profile.setMeasures(healthMeasures);
 		
-		String suggestions = getSuggestionForProfile(profile);
+		HealthProfileSuggestions suggestions = getSuggestionForProfile(profile);
 		
 		profile.setSuggestions(suggestions);
-		
-		profile.setTimestamp(new Date());
 		
 		return profile;
 	}
@@ -105,9 +111,8 @@ public class HealthProfileServiceHelper {
 		return measures;
 	}
 	
-	//TODO perfectionate the following methods
 	private void computeAndSetWarningLevelFor(HealthMeasure measure){		
-		if (measure.getRefLevel() == null){
+		if (measure.getRefLevel().isEmpty()){
 			measure.setWarning(null);
 			return;
 		}
@@ -126,12 +131,12 @@ public class HealthProfileServiceHelper {
 		
 		double range = max - min;
 		double diff = 0;
-		double value = Double.valueOf(measure.getValue());
-		if (value < min){
-			diff = Math.abs(min - value);
+		double measureValue = Double.valueOf(measure.getValue());
+		if (measureValue < min){
+			diff = Math.abs(min - measureValue);
 		}
-		else if (value > max){
-			diff = Math.abs(value - max);
+		else if (measureValue > max){
+			diff = Math.abs(measureValue - max);
 		} 
 		
 		if (diff == 0){
@@ -146,12 +151,17 @@ public class HealthProfileServiceHelper {
 		else if (diff > (range)){
 			measure.setWarning(WARNING_HIGH);
 		}
+		else {
+			LOGGER.log(Level.INFO, "Missed warning level option");
+		}
 	}
 	
-	private String getSuggestionForProfile (HealthProfile profile){		
-		StringBuilder suggestions = new StringBuilder();
-		
-		int profileIlness = 0;
+	private HealthProfileSuggestions getSuggestionForProfile (HealthProfile profile){		
+		HealthProfileSuggestions suggestions = new HealthProfileSuggestions();
+		List<String> advice = new ArrayList<String>();
+
+		int numWL = 0, numWM = 0, numWH = 0;
+		int profileIllness = 0;
 		int numMeasures = 0;
 		List<HealthMeasure> measures = profile.getMeasures();
 		for (HealthMeasure m : measures){
@@ -162,24 +172,34 @@ public class HealthProfileServiceHelper {
 			numMeasures++;
 			switch (wLevel) {
 			case WARNING_LOW:
-				profileIlness += 1;
-				suggestions.append(adapter.readAdviceFor(m.getMeasureName()));
+				profileIllness += ILLNESS_WARNING_LOW;
+				advice.add(adapter.readAdviceFor(m.getMeasureName()));
+				numWL++;
 				break;
 			case WARNING_MEDIUM:
-				profileIlness += 2;
-				suggestions.append(adapter.readAdviceFor(m.getMeasureName()));
+				profileIllness += ILLNESS_WARNING_MEDIUM;
+				advice.add(adapter.readAdviceFor(m.getMeasureName()));
+				numWM++;
 				break;
 			case WARNING_HIGH:
-				profileIlness += 4;
-				suggestions.append(adapter.readAdviceFor(m.getMeasureName()));
+				profileIllness += ILLNESS_WARNING_HIGH;
+				advice.add(adapter.readAdviceFor(m.getMeasureName()));
+				numWH++;
 				break;
 			default:
+				LOGGER.log(Level.INFO, "Undefined Warning level for suggestion");
 				break;
 			}
 		}
 		
-		profileIlness = profileIlness/numMeasures;
-		suggestions.append("Profile illness: " + profileIlness);
-		return suggestions.toString();
+		profileIllness = profileIllness/numMeasures;
+		suggestions.setNumMeasures(measures.size());
+		suggestions.setNumDetailedMeasures(numMeasures);
+		suggestions.setLowW(numWL);
+		suggestions.setMediumW(numWM);
+		suggestions.setHighW(numWH);
+		suggestions.setIllnessLevel(profileIllness);
+		suggestions.setAdvice(advice);
+		return suggestions;
 	}
 }

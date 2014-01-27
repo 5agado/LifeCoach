@@ -1,6 +1,5 @@
 package healthProfile;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import util.Serializer;
-import util.XMLAdapter;
+import util.XMLParser;
 
 public class HealthProfileAdapter {	
 	private static final String INFO_FILES_PATH = "src/main/resources/healthProfile_info_src/";
@@ -24,14 +23,14 @@ public class HealthProfileAdapter {
 	private static final String ADVICE_FILENAME = "advice";
 	private static final String PROFILE_FILENAME = "profile";
 	private static final String STD_FILE_EXTENSION = ".xml"; 
-	private XMLAdapter profileAdapter;
-	private XMLAdapter levelsAdapter;
-	private XMLAdapter adviceAdapter;
+	private XMLParser profileAdapter;
+	private XMLParser levelsAdapter;
+	private XMLParser adviceAdapter;
 	
 	public HealthProfileAdapter(String profileType, int personId) throws IOException, SAXException, ParserConfigurationException {
-		profileAdapter = new XMLAdapter(INFO_FILES_PATH + profileType + "_" + PROFILE_FILENAME + "_" + personId + STD_FILE_EXTENSION);
-		levelsAdapter = new XMLAdapter(INFO_FILES_PATH + profileType + "_" + LEVELS_FILENAME + STD_FILE_EXTENSION);
-		adviceAdapter = new XMLAdapter(INFO_FILES_PATH + profileType + "_" + ADVICE_FILENAME + STD_FILE_EXTENSION);
+		profileAdapter = new XMLParser(INFO_FILES_PATH + profileType + "_" + PROFILE_FILENAME + "_" + personId + STD_FILE_EXTENSION);
+		levelsAdapter = new XMLParser(INFO_FILES_PATH + profileType + "_" + LEVELS_FILENAME + STD_FILE_EXTENSION);
+		adviceAdapter = new XMLParser(INFO_FILES_PATH + profileType + "_" + ADVICE_FILENAME + STD_FILE_EXTENSION);
 	}
 	
 	//The measure are without the MeasureDefinition info
@@ -59,7 +58,7 @@ public class HealthProfileAdapter {
 	public String readReferenceLevelFor(String measureName) {
 		Node node = (Node) levelsAdapter.readNode("/ref_levels/level[measureName='" + measureName + "']");
 		if (node == null){
-			return null;
+			return "";
 		}
 		XMLevel level = (XMLevel) Serializer.unmarshal(XMLevel.class, node);
         return level.toString();
@@ -68,7 +67,7 @@ public class HealthProfileAdapter {
 	public String readAdviceFor(String measureName) {
 		Node node = (Node) adviceAdapter.readNode("/advice_list/advice[measureName='" + measureName + "']");
 		if (node == null){
-			return null;
+			return "";
 		}
 		XMLAdvice advice = (XMLAdvice) Serializer.unmarshal(XMLAdvice.class, node);
         return advice.getContent();

@@ -1,17 +1,24 @@
 package model;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import model.dao.GoalDao;
+import model.dao.MeasureDao;
+import model.dao.MeasureDefinitionDao;
 import model.dao.PersonDao;
 
 import org.junit.Test;
@@ -24,7 +31,7 @@ public class TestDao {
 		p.setFirstname("Ora");
 		p.setLastname("Labora");
 		Calendar c = Calendar.getInstance();
-		c.set(2001, 1, 12);
+		c.set(1901, 1, 12);
 		p.setBirthdate(c.getTime());
 		p = PersonDao.getInstance().create(p);
 		assertNotNull("Id should not be null", p.getPersonId());
@@ -32,7 +39,7 @@ public class TestDao {
 	
 	@Test
 	public void readPerson() {
-		Person p = PersonDao.getInstance().read(0);
+		Person p = PersonDao.getInstance().read(12);
 		assertNotNull("The person is not here", p);
 		marshalToStdOut(Person.class, p);
 	}
@@ -62,138 +69,124 @@ public class TestDao {
 	
 	@Test
 	public void createMeasure() {
-		
-	}
-	
-	@Test
-	public void readMeasure() {
-		
-	}
-	
-	@Test
-	public void updateMeasure() {
-		
-	}
-	
-	@Test
-	public void deleteMeasure() {
-		
-	}
-	
-	@Test
-	public void createMeasureDefinition() {
-		
-	}
-	
-	@Test
-	public void readMeasureDefinition() {
-		
-	}
-	
-	@Test
-	public void updateMeasureDefinition() {
-		
-	}
-	
-	@Test
-	public void deleteMeasureDefinition() {
-		
-	}
-	
-	/*
-	@Test
-	public void saveNewHealthProfileWithDao() {
-		Person p = PersonDao.getPersonById(2);
+		Person p = PersonDao.getInstance().read(11);
 		assertNotNull("The person is not here", p);
-		HealthProfile hp = new HealthProfile();
-		hp.setPerson(p);
-		hp.setCalories(1003l);
-		hp.setHeight(14.45);
-		hp.setSteps(1200);
-		hp.setWeight(18.67);
+		List<MeasureDefinition> def = MeasureDefinitionDao.getInstance().readByName("weight");
+		assertNotSame("The measureDef is not here", 0, def.size());
+		Measure m = new Measure();
+		m.setMeasureDefinition(def.get(0));
+		m.setPerson(p);
 		Calendar c = Calendar.getInstance();
-		c.set(2013, 5, 21);
-		hp.setDate(c.getTime());
-		HealthProfileDao.saveHealthProfile(hp);
-		
-		assertNotNull("Id should not be null", hp.getId());
+		c.set(2013, 12, 20);
+		m.setTimestamp(c.getTime());
+		int value = 79;
+		m.setValue(String.valueOf(value));
+		MeasureDao.getInstance().create(m);
 	}
 	
 	@Test
-	public void updateHealthProfileWithDao() {
-		Person p = PersonDao.getPersonById(151);
+	public void createGoal() {
+		//Random r = new Random();
+		Person p = PersonDao.getInstance().read(11);
 		assertNotNull("The person is not here", p);
-		HealthProfile hp = HealthProfileDao.getHealthProfileById(1);
-		//case insert
-		if (hp == null){
-			hp = new HealthProfile();
-			hp.setPerson(p);
-			hp.setCalories(1000l);
-			hp.setHeight(13.45);
-			hp.setSteps(3000);
-			hp.setWeight(45.67);
+		List<MeasureDefinition> def = MeasureDefinitionDao.getInstance().readByName("calories");
+		assertNotSame("The measureDef is not here", 0, def.size());
+		Goal g = new Goal();
+		g.setMeasureDefinition(def.get(0));
+		g.setPerson(p);
+		g.setComparator("LT");
+		g.setDescription(def.get(0).getMeasureName());
+		g.setTimestamp(new Date());
+		g.setValue("3000");
+		Calendar c = Calendar.getInstance();
+//		int year = r.nextInt(10) + 2010;
+//		int month = r.nextInt(12) + 1;
+//		int day = r.nextInt(28) + 1;
+		c.set(2013, 4, 20);
+		g.setExpDate(c.getTime());
+		GoalDao.getInstance().create(g);
+	}
+	
+	@Test
+	public void createProfileMeasure() {
+		Random r = new Random();
+		Person p = PersonDao.getInstance().read(11);
+		assertNotNull("The person is not here", p);
+		List<MeasureDefinition> profileMeasureDef = MeasureDefinitionDao.getInstance().readByProfileType("crossfit");
+		assertNotSame("The measureDef is not here", 0, profileMeasureDef.size());
+		for (MeasureDefinition def : profileMeasureDef){
+			Measure m = new Measure();
+			m.setMeasureDefinition(def);
+			m.setPerson(p);
+			m.setTimestamp(new Date());
+			int value = r.nextInt(100) + 1;
+			m.setValue(String.valueOf(value));
+			MeasureDao.getInstance().create(m);
+		}
+	}
+	
+	@Test
+	public void createProfileGoals() {
+		Random r = new Random();
+		Person p = PersonDao.getInstance().read(11);
+		assertNotNull("The person is not here", p);
+		List<MeasureDefinition> profileMeasureDef = MeasureDefinitionDao.getInstance().readByProfileType("crossfit");
+		assertNotSame("The measureDef is not here", 0, profileMeasureDef.size());
+		for (MeasureDefinition def : profileMeasureDef){
+			Goal g = new Goal();
+			g.setMeasureDefinition(def);
+			g.setPerson(p);
+			g.setComparator("GT");
+			g.setDescription(def.getMeasureName());
+			g.setTimestamp(new Date());
+			g.setValue("50");
 			Calendar c = Calendar.getInstance();
-			c.set(1884, 5, 21);
-			hp.setDate(c.getTime());
-			hp = HealthProfileDao.saveHealthProfile(hp);
+			int year = r.nextInt(10) + 2010;
+			int month = r.nextInt(12) + 1;
+			int day = r.nextInt(28) + 1;
+			c.set(year, month, day);
+			g.setExpDate(c.getTime());
+			GoalDao.getInstance().create(g);
 		}
-		//case update
-		else {
-			hp.setCalories(hp.getCalories() + 1);
-			hp.setHeight(13.45);
-			hp.setSteps(3000);
-			hp.setWeight(45.67);
-			Calendar c = Calendar.getInstance();
-			c.set(1884, 5, 21);
-			hp.setDate(c.getTime());
-			hp = HealthProfileDao.updateHealthProfile(hp);
-		}
+	}
+	
+	@Test
+	public void popolateDatabasePerson() {
+		final int MAX_PEOPLE = 10;
+		Random r = new Random();
 		
-		assertNotNull("Id should not be null", hp.getId());
-	}
-	
-	@Test
-	public void getAll() {
-		List<Person> people = PersonDao.getAll();
-		assertNotNull("The list of people should not be null", people);
-		assertEquals("getAll Person count", 2, people.size());
-	}
-	
-	@Test
-	public void getHealthProfileByIdAndOwner() {
-		int personId = 1;
-		Person p = PersonDao.getPersonById(personId);
-		assertNotNull("The person is not here", p);
-		HealthProfile hp = HealthProfileDao.getHealthProfileByIdAndOwner(2, personId);
-		assertNotNull("The health profile is not here", hp);
-		JAXBContext context;
-		try {
-			context = JAXBContext.newInstance(HealthProfile.class);
-			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			marshaller.marshal(hp, System.out);
-		} catch (JAXBException e) {
+		int numPeople = 0;
+		
+		try (BufferedReader br = new BufferedReader(new FileReader("src/test/resources/test.csv"))){
+ 
+			String sCurrentLine;
+ 
+			while ((sCurrentLine = br.readLine()) != null && numPeople < MAX_PEOPLE) {
+				String[] parts = sCurrentLine.split(",");
+				 
+				String first = parts[0].substring(1, parts[0].length()-1);
+				String second = parts[1].substring(1, parts[1].length()-1);
+				String mail = parts[parts.length -2].substring(1, parts[parts.length-2].length()-1);
+				
+				Person person = new Person();
+				person.setFirstname(first);
+				person.setLastname(second);
+				person.setEmail(mail);
+				Calendar c = Calendar.getInstance();
+				int year = r.nextInt(110) + 1900;
+				int month = r.nextInt(12) + 1;
+				int day = r.nextInt(28) + 1;
+				c.set(year, month, day);
+				person.setBirthdate(c.getTime());
+				
+				PersonDao.getInstance().create(person);
+				numPeople++;
+			}
+ 
+		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} 
 	}
-	
-	@Test
-	public void getAndOutputHealthProfileHistory() {
-		Person p = PersonDao.getPersonById(11);
-		assertNotNull("The person is not here", p);
-		List<HealthProfile> history = p.getHealthProfileHistory();
-		HealthProfileHistory hpHistory = new HealthProfileHistory();
-		hpHistory.setHealthProfiles(history);
-		JAXBContext context;
-		try {
-			context = JAXBContext.newInstance(HealthProfileHistory.class);
-			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			marshaller.marshal(hpHistory, System.out);
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-	}*/
 	
 	public static void marshalToStdOut(Class<?> objClass, Object obj){
 		try {

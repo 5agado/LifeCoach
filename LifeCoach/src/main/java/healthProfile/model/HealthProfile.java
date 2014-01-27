@@ -11,19 +11,23 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import model.Person;
+
 @XmlRootElement
 @XmlAccessorType (XmlAccessType.FIELD)
-@XmlType(propOrder = {"timestamp", "measures", "suggestions" })
+@XmlType(propOrder = {"timestamp", "person", "measures", "suggestions" })
 public class HealthProfile implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@XmlElement(name = "date")
 	private Date timestamp;
 	
+	private Person person;
+
 	@XmlElement(name = "measure")
 	private List<HealthMeasure> measures;
 	
-	private String suggestions;
+	private HealthProfileSuggestions suggestions;
 	
 	public HealthProfile() {
 		measures = new ArrayList<HealthMeasure>();
@@ -36,12 +40,20 @@ public class HealthProfile implements Serializable {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	
+	public Person getPerson() {
+		return person;
+	}
 
-	public String getSuggestions() {
+	public void setPerson(Person person) {
+		this.person = person;
+	}
+
+	public HealthProfileSuggestions getSuggestions() {
 		return suggestions;
 	}
 
-	public void setSuggestions(String suggestions) {
+	public void setSuggestions(HealthProfileSuggestions suggestions) {
 		this.suggestions = suggestions;
 	}
 

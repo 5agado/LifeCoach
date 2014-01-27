@@ -9,7 +9,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 
-import model.Person;
 import util.Serializer;
 
 import com.sun.jersey.api.client.Client;
@@ -68,7 +67,6 @@ public class RESTClient {
 			System.out.println("Request entity: " + reqEntity.toString());
 		}
 		
-		//TODO check if works with JSON too
 		ClientResponse response = webResource.path(postPath).type(MediaType.APPLICATION_XML_TYPE).type(MediaType.APPLICATION_JSON_TYPE)
                 .post(ClientResponse.class, reqEntity);
 		
