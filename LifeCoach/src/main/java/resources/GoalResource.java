@@ -28,9 +28,9 @@ public class GoalResource {
 	private final GoalDao goalDao = GoalDao.getInstance();
 	private final MeasureDefinitionDao measureDefinitionDao = MeasureDefinitionDao
 			.getInstance();
-	
+
 	@GET
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<Goal> readAllGoals(@PathParam("id") int personId,
 			@PathParam("measure") String measureName) {
 		Person p = personDao.read(personId);
@@ -47,9 +47,8 @@ public class GoalResource {
 	}
 
 	@POST
-	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response createGoal(Goal goal,
-			@PathParam("id") int personId,
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response createGoal(Goal goal, @PathParam("id") int personId,
 			@PathParam("measure") String measureName) {
 		Person p = personDao.read(personId);
 		if (p == null) {
@@ -72,7 +71,7 @@ public class GoalResource {
 	}
 
 	@GET
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Path("{gid}")
 	public Goal readGoal(@PathParam("id") int personId,
 			@PathParam("measure") String measureName,
@@ -92,9 +91,9 @@ public class GoalResource {
 
 	@PUT
 	@Path("{gid}")
-	@Consumes@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response updateGoal(Goal goal,
-			@PathParam("id") int personId,
+	@Consumes
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response updateGoal(Goal goal, @PathParam("id") int personId,
 			@PathParam("measure") String measureName,
 			@PathParam("gid") int goalId) {
 		Person p = personDao.read(personId);
@@ -110,9 +109,9 @@ public class GoalResource {
 		if (g == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
-		
-		//Here we decided to keep the previous timestamp
-		//i.e.: when the goal we are going to modify has been created
+
+		// Here we decided to keep the previous timestamp
+		// i.e.: when the goal we are going to modify has been created
 		goal.setTimestamp(g.getTimestamp());
 		goal.setGoalId(goalId);
 		goalDao.update(g);
@@ -141,8 +140,7 @@ public class GoalResource {
 		g = goalDao.read(goalId);
 		if (g == null) {
 			return Response.ok().build();
-		}
-		else
+		} else
 			return Response.notModified().build();
 	}
 }

@@ -22,38 +22,41 @@ import model.ListWrapper;
 import org.w3c.dom.Node;
 
 public class Serializer {
-	private final static Logger LOGGER = Logger.getLogger(Serializer.class.getName());
-	
+	private final static Logger LOGGER = Logger.getLogger(Serializer.class
+			.getName());
+
 	private Serializer() {
 		throw new AssertionError();
 	}
-	
+
 	public static <T> void marshal(T obj, File out) {
 		try {
 			JAXBContext context = JAXBContext.newInstance(obj.getClass());
 			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+					Boolean.TRUE);
 			marshaller.marshal(obj, out);
 		} catch (JAXBException e) {
-			LOGGER.log(Level.SEVERE, e.getLocalizedMessage());
+			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
-		
+
 	}
-	
+
 	public static <T> String marshalAsString(T obj) {
 		try {
 			JAXBContext context = JAXBContext.newInstance(obj.getClass());
 			StringWriter sw = new StringWriter();
 			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+					Boolean.TRUE);
 			marshaller.marshal(obj, sw);
 			return sw.toString();
 		} catch (JAXBException e) {
-			LOGGER.log(Level.SEVERE, e.getLocalizedMessage());
+			LOGGER.log(Level.SEVERE, e.getMessage());
 			return "";
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static <T> T unmarshal(Class<T> objClass, String obj) {
 		try {
@@ -63,11 +66,11 @@ public class Serializer {
 			T res = (T) unmarshaller.unmarshal(reader);
 			return res;
 		} catch (JAXBException e) {
-			LOGGER.log(Level.SEVERE, e.getLocalizedMessage());
+			LOGGER.log(Level.SEVERE, e.getMessage());
 			return (T) new Object();
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static <T> T unmarshal(Class<T> objClass, Node node) {
 		try {
@@ -76,44 +79,47 @@ public class Serializer {
 			T res = (T) unmarshaller.unmarshal(node);
 			return res;
 		} catch (JAXBException e) {
-			LOGGER.log(Level.SEVERE, e.getLocalizedMessage());
+			LOGGER.log(Level.SEVERE, e.getMessage());
 			return (T) new Object();
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static <T> List<T> unmarshalWrapper(Class<T> objClass, String obj) {
 		try {
-			JAXBContext context = JAXBContext.newInstance(objClass, ListWrapper.class);
+			JAXBContext context = JAXBContext.newInstance(objClass,
+					ListWrapper.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			StringReader reader = new StringReader(obj);
 			StreamSource source = new StreamSource(reader);
-			ListWrapper<T> wrapper = (ListWrapper<T>) unmarshaller.unmarshal(source, ListWrapper.class).getValue();
+			ListWrapper<T> wrapper = (ListWrapper<T>) unmarshaller.unmarshal(
+					source, ListWrapper.class).getValue();
 			return wrapper.getItems();
 		} catch (JAXBException e) {
-			LOGGER.log(Level.SEVERE, e.getLocalizedMessage());
+			LOGGER.log(Level.SEVERE, e.getMessage());
 			return (List<T>) new ListWrapper<T>();
 		}
-    }
-	
+	}
+
 	public static <T> void generateXSD(Class<?>... objClasses) {
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(objClasses);
 			SchemaOutputResolver sor = new MySchemaOutputResolver();
 			jaxbContext.generateSchema(sor);
 		} catch (JAXBException | IOException e) {
-			LOGGER.log(Level.SEVERE, e.getLocalizedMessage());
+			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	}
-	
-	//Helper class for output schema generation
+
+	// Helper class for output schema generation
 	private static class MySchemaOutputResolver extends SchemaOutputResolver {
-		public Result createOutput(String namespaceURI, String suggestedFileName) throws IOException {
-	        File file = new File(suggestedFileName);
-	        StreamResult result = new StreamResult(file);
-	        result.setSystemId(file.toURI().toURL().toString());
-	        return result;
-	    }
+		public Result createOutput(String namespaceURI, String suggestedFileName)
+				throws IOException {
+			File file = new File(suggestedFileName);
+			StreamResult result = new StreamResult(file);
+			result.setSystemId(file.toURI().toURL().toString());
+			return result;
+		}
 
 	}
 }

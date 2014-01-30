@@ -1,6 +1,5 @@
 package lifeCoach;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,18 +13,15 @@ import javax.ws.rs.core.MediaType;
 import lifeCoach.model.LifeCoachMeasure;
 import lifeCoach.model.LifeCoachReport;
 import lifeCoach.model.LifeCoachReportStatistics;
-import model.Goal;
-import model.Measure;
 import model.Person;
-import client.ProfileClient;
-import client.QuotesClient;
+import client.LifeCoachLogicClient;
+import client.ResourcesClient;
 
 @Path("/lifeCoach/")
 public class LifeCoachResource {
-	private ProfileClient client = new ProfileClient(
-			"http://localhost:8080/SDE_Final_Project/rest");
-	private QuotesClient quotesClient = new QuotesClient();
-
+	private ResourcesClient client = new ResourcesClient();
+	private LifeCoachLogicClient logicClient = new LifeCoachLogicClient();
+	//TODO use default value
 	@GET
 	@Path("report/person/{id}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -46,15 +42,15 @@ public class LifeCoachResource {
 			profileType = "";
 		}
 
-		List<LifeCoachMeasure> measures = getLifeCoachProfileMeasures(personId,
-				profileType);
+		List<LifeCoachMeasure> measures = logicClient.getLifeCoachMeasures(
+				personId, profileType);
 		report.setMeasures(measures);
 
-		LifeCoachReportStatistics statistics = LifeCoachLogic
-				.computeAndGetReportOverallStatistics(report);
+		LifeCoachReportStatistics statistics = logicClient
+				.getReportOverallStatistics(personId, profileType);
 		report.setStatistics(statistics);
 
-		String quote = quotesClient.getRandomQuote();
+		String quote = client.getRandomQuote();
 		report.setMotivational(quote);
 
 		return report;
@@ -78,43 +74,8 @@ public class LifeCoachResource {
 			profileType = "";
 		}
 
-		List<LifeCoachMeasure> measures = getLifeCoachProfileMeasures(personId,
+		statistics = logicClient.getReportOverallStatistics(personId,
 				profileType);
-
-		LifeCoachReport report = new LifeCoachReport();
-		report.setMeasures(measures);
-
-		statistics = LifeCoachLogic
-				.computeAndGetReportOverallStatistics(report);
 		return statistics;
-	}
-
-	private List<LifeCoachMeasure> getLifeCoachProfileMeasures(int personId,
-			String profileType) {
-		List<Measure> remoteMeasures = client
-				.readProfile(personId, profileType);
-		List<LifeCoachMeasure> measures = new ArrayList<LifeCoachMeasure>();
-		if (remoteMeasures == null) {
-			return measures;
-		}
-
-		for (Measure m : remoteMeasures) {
-			LifeCoachMeasure lifeM = new LifeCoachMeasure();
-			List<String> goalsStatusDescription = new ArrayList<String>();
-			lifeM.setMeasureName(m.getMeasureDefinition().getMeasureName());
-			lifeM.setValue(m.getValue());
-			List<Goal> goals = client.readGoalsByMeasure(personId, m
-					.getMeasureDefinition().getMeasureName());
-			for (Goal g : goals) {
-				String goalState = LifeCoachLogic
-						.computeAndGetGoalCurrentState(g, m);
-				goalsStatusDescription.add(goalState);
-			}
-			lifeM.setGoals(goals);
-			lifeM.setGoalsStatusDescription(goalsStatusDescription);
-			measures.add(lifeM);
-		}
-
-		return measures;
 	}
 }

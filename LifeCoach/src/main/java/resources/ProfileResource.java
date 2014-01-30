@@ -26,27 +26,28 @@ public class ProfileResource {
 	private final GoalDao goalDao = GoalDao.getInstance();
 	private final MeasureDefinitionDao measureDefinitionDao = MeasureDefinitionDao
 			.getInstance();
-	
+
 	@GET
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Path("measures")
 	public List<Measure> readProfileMeasures(@PathParam("id") int personId,
 			@QueryParam("profileType") String profileType) {
 		Person p = personDao.read(personId);
 		if (p == null) {
 			return null;
-		}		
-		
-		if (profileType == null || profileType.isEmpty()){
-			return measureDao.readAllByPerson(personId);
 		}
-		
-		List<Measure> profile = measureDao.readPersonProfile(personId, profileType);
+
+		if (profileType == null) {
+			profileType = "";
+		}
+
+		List<Measure> profile = measureDao.readPersonProfile(personId,
+				profileType);
 		return profile;
 	}
-	
+
 	@GET
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Path("goals")
 	public List<Goal> readProfileGoals(@PathParam("id") int personId,
 			@QueryParam("profileType") String profileType) {
@@ -54,23 +55,24 @@ public class ProfileResource {
 		if (p == null) {
 			return null;
 		}
-		
-		if (profileType == null || profileType.isEmpty()){
+
+		if (profileType == null || profileType.isEmpty()) {
 			return goalDao.readAllByPerson(personId);
 		}
-		
+
 		List<MeasureDefinition> list = measureDefinitionDao
 				.readByProfileType(profileType);
 		if (list.isEmpty()) {
 			return null;
 		}
-		
+
 		List<Goal> goals = new ArrayList<Goal>();
-		for (MeasureDefinition def : list){
-			List<Goal> subGoals = goalDao.readAllByPersonAndDefinition(personId, def.getMeasureDefId());
+		for (MeasureDefinition def : list) {
+			List<Goal> subGoals = goalDao.readAllByPersonAndDefinition(
+					personId, def.getMeasureDefId());
 			goals.addAll(subGoals);
 		}
-		
+
 		return goals;
 	}
 }

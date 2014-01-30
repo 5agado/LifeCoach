@@ -23,43 +23,39 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"measureId", "value", "timestamp", "measureDefinition"})
+@XmlType(propOrder = { "measureId", "value", "timestamp", "measureDefinition" })
 @Entity
-@Table(name="Measure")
+@Table(name = "Measure")
 @NamedQueries({
-	@NamedQuery(name="Measure.findAll", query="SELECT m FROM Measure m"),
-	@NamedQuery(name="Measure.findByPerson", query="SELECT m FROM Measure m WHERE m.person.personId = :pId"),
-	@NamedQuery(name="Measure.findByPersonAndDefinition", query="SELECT m FROM Measure m WHERE m.person.personId = :pId "
-			+ "AND m.measureDefinition.measureDefId = :mDefId"),
-})
+		@NamedQuery(name = "Measure.findAll", query = "SELECT m FROM Measure m"),
+		@NamedQuery(name = "Measure.findByPerson", query = "SELECT m FROM Measure m WHERE m.person.personId = :pId"),
+		@NamedQuery(name = "Measure.findByPersonAndDefinition", query = "SELECT m FROM Measure m WHERE m.person.personId = :pId "
+				+ "AND m.measureDefinition.measureDefId = :mDefId"), })
 public class Measure implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(generator="sqlite_measure")
-	@TableGenerator(name="sqlite_measure", table="sqlite_sequence",
-	    pkColumnName="name", valueColumnName="seq",
-	    pkColumnValue="Measure",
-	    initialValue=1, allocationSize=1)
-	@Column(name="measureId")
+	@GeneratedValue(generator = "sqlite_measure")
+	@TableGenerator(name = "sqlite_measure", table = "sqlite_sequence", pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "Measure", initialValue = 1, allocationSize = 1)
+	@Column(name = "measureId")
 	private int measureId;
 
 	@Temporal(TemporalType.DATE)
-	@Column(name="timestamp")
+	@Column(name = "timestamp")
 	private Date timestamp;
 
-	@Column(name="value")
+	@Column(name = "value")
 	private String value;
 
-	//bi-directional many-to-one association to MeasureDefinition
+	// bi-directional many-to-one association to MeasureDefinition
 	@ManyToOne
-	@JoinColumn(name="measureDefId", referencedColumnName = "measureDefId", insertable=true, updatable=false)
+	@JoinColumn(name = "measureDefId", referencedColumnName = "measureDefId", insertable = true, updatable = false)
 	private MeasureDefinition measureDefinition;
 
 	@XmlTransient
-	//bi-directional many-to-one association to Person
+	// bi-directional many-to-one association to Person
 	@ManyToOne
-	@JoinColumn(name="personId", referencedColumnName = "personId", insertable=true, updatable=false)
+	@JoinColumn(name = "personId", referencedColumnName = "personId", insertable = true, updatable = false)
 	private Person person;
 
 	public Measure() {

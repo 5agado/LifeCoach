@@ -23,15 +23,15 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"goalId", "description", "comparator", "value", "expDate", "timestamp"})
+@XmlType(propOrder = { "goalId", "description", "comparator", "value",
+		"expDate", "timestamp" })
 @Entity
 @Table(name = "Goal")
 @NamedQueries({
-	@NamedQuery(name = "Goal.findAll", query = "SELECT g FROM Goal g"),
-	@NamedQuery(name="Goal.findByPerson", query="SELECT g FROM Goal g WHERE g.person.personId = :pId"),
-	@NamedQuery(name="Goal.findByPersonAndDefinition", query="SELECT g FROM Goal g WHERE g.person.personId = :pId "
-			+ "AND g.measureDefinition.measureDefId = :mDefId"),
-})
+		@NamedQuery(name = "Goal.findAll", query = "SELECT g FROM Goal g"),
+		@NamedQuery(name = "Goal.findByPerson", query = "SELECT g FROM Goal g WHERE g.person.personId = :pId"),
+		@NamedQuery(name = "Goal.findByPersonAndDefinition", query = "SELECT g FROM Goal g WHERE g.person.personId = :pId "
+				+ "AND g.measureDefinition.measureDefId = :mDefId"), })
 public class Goal implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -46,11 +46,8 @@ public class Goal implements Serializable {
 	private Date expDate;
 
 	@Id
-	@GeneratedValue(generator="sqlite_goal")
-	@TableGenerator(name="sqlite_goal", table="sqlite_sequence",
-	    pkColumnName="name", valueColumnName="seq",
-	    pkColumnValue="Goal",
-	    initialValue=1, allocationSize=1)
+	@GeneratedValue(generator = "sqlite_goal")
+	@TableGenerator(name = "sqlite_goal", table = "sqlite_sequence", pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "Goal", initialValue = 1, allocationSize = 1)
 	@Column(name = "goalId")
 	private int goalId;
 

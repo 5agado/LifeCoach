@@ -23,77 +23,81 @@ public class RESTClient {
 			.getName());
 	private URI serverUri;
 	private WebResource webResource;
-	private Boolean debugRequests = false;
-	
+
 	public RESTClient(String requestUrl) {
 		configureClient(requestUrl);
 	}
-	
-	private void configureClient(String requestUrl){
+
+	private void configureClient(String requestUrl) {
 		ClientConfig config = new DefaultClientConfig();
-	    Client client = Client.create(config);
-	    serverUri = getBaseURI(requestUrl);
-	    this.webResource = client.resource(serverUri);
+		Client client = Client.create(config);
+		serverUri = getBaseURI(requestUrl);
+		this.webResource = client.resource(serverUri);
 	}
-	
-	protected ClientResponse executeGET(String getPath, MultivaluedMap<String, String> queryParams){
-		if (queryParams == null){
+
+	protected ClientResponse executeGET(String getPath,
+			MultivaluedMap<String, String> queryParams) {
+		if (queryParams == null) {
 			queryParams = new MultivaluedMapImpl();
 		}
-		if (debugRequests){
-			System.out.println("Executing GET to: " + serverUri.toString() + getPath + "?" + queryParams.toString());
-		}
 		
-		ClientResponse response = webResource.queryParams(queryParams).path(getPath).accept(MediaType.APPLICATION_XML).accept(MediaType.APPLICATION_JSON)
-                .get(ClientResponse.class);
-		
+		LOGGER.log(Level.INFO, "Executing GET to: " + serverUri.toString()
+			+ getPath + "?" + queryParams.toString());
+
+		ClientResponse response = webResource.queryParams(queryParams)
+				.path(getPath).accept(MediaType.APPLICATION_XML)
+				.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+
 		return response;
 	}
-	
-	protected ClientResponse executePOST(String postPath){
-		if (debugRequests){
-			System.out.println("Executing POST to: " + serverUri.toString() + postPath);
-		}
-		
-		ClientResponse response = webResource.path(postPath).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
-                .post(ClientResponse.class);
-		
+
+	protected ClientResponse executePOST(String postPath) {
+		LOGGER.log(Level.INFO, "Executing POST to: " + serverUri.toString()
+				+ postPath);
+
+		ClientResponse response = webResource.path(postPath)
+				.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
+				.post(ClientResponse.class);
+
 		return response;
 	}
-	
-	protected ClientResponse executePOSTWithRequestEntity(String postPath, Object reqEntity){
-		if (debugRequests){
-			System.out.println("Executing POST to: " + serverUri.toString() + postPath);
-			System.out.println("Request entity: " + reqEntity.toString());
-		}
-		
-		ClientResponse response = webResource.path(postPath).type(MediaType.APPLICATION_XML_TYPE).type(MediaType.APPLICATION_JSON_TYPE)
-                .post(ClientResponse.class, reqEntity);
-		
+
+	protected ClientResponse executePOSTWithRequestEntity(String postPath,
+			Object reqEntity) {
+		LOGGER.log(Level.INFO, "Executing POST to: " + serverUri.toString()
+					+ postPath);
+		LOGGER.log(Level.INFO, "Request entity: " + reqEntity.toString());
+			System.out.println();
+
+		ClientResponse response = webResource.path(postPath)
+				.type(MediaType.APPLICATION_XML_TYPE)
+				.type(MediaType.APPLICATION_JSON_TYPE)
+				.post(ClientResponse.class, reqEntity);
+
 		return response;
 	}
-	
-	protected ClientResponse executePUT(String putPath){
-		if (debugRequests){
-			System.out.println("Executing PUT to: " + serverUri.toString() + putPath);
-		}
-		
-		ClientResponse response = webResource.path(putPath).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
-                .put(ClientResponse.class);		
-		
+
+	protected ClientResponse executePUT(String putPath) {
+		LOGGER.log(Level.INFO, "Executing PUT to: " + serverUri.toString()
+					+ putPath);			
+
+		ClientResponse response = webResource.path(putPath)
+				.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
+				.put(ClientResponse.class);
+
 		return response;
 	}
-	
-	protected ClientResponse executeDELETE(String deletePath){
-		if (debugRequests){
-			System.out.println("Executing DELETE to: " + serverUri.toString() + deletePath);
-		}
-		ClientResponse response = webResource.path(deletePath).delete(ClientResponse.class);
-		
+
+	protected ClientResponse executeDELETE(String deletePath) {
+		LOGGER.log(Level.INFO, "Executing DELETE to: " + serverUri.toString()
+				+ deletePath);
+		ClientResponse response = webResource.path(deletePath).delete(
+				ClientResponse.class);
+
 		return response;
 	}
-	
-	protected <T> T extractEntity(ClientResponse response, Class<T> objClass){
+
+	protected <T> T extractEntity(ClientResponse response, Class<T> objClass) {
 		if (response.getStatus() != 200) {
 			LOGGER.log(Level.INFO, "Http error code = " + response.getStatus());
 			return null;
@@ -103,8 +107,9 @@ public class RESTClient {
 		T entity = Serializer.unmarshal(objClass, res);
 		return entity;
 	}
-	
-	protected <T> List<T> extractEntityWrapper(ClientResponse response, Class<T> objClass){
+
+	protected <T> List<T> extractEntityWrapper(ClientResponse response,
+			Class<T> objClass) {
 		if (response.getStatus() != 200) {
 			LOGGER.log(Level.INFO, "Http error code = " + response.getStatus());
 			return null;
@@ -114,13 +119,9 @@ public class RESTClient {
 		List<T> entityWrapper = Serializer.unmarshalWrapper(objClass, res);
 		return entityWrapper;
 	}
-	
-	public void setDebugEnabled (Boolean debug){
-		debugRequests = debug;
-	}
-	
+
 	private static URI getBaseURI(String requestUrl) {
-	    return UriBuilder.fromUri(requestUrl).build();
+		return UriBuilder.fromUri(requestUrl).build();
 	}
 
 }

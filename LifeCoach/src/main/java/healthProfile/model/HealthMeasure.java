@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"measureName", "value", "refLevel", "warning" })
+@XmlType(propOrder = { "measureName", "value", "refLevel", "warning" })
 public class HealthMeasure implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -18,7 +18,7 @@ public class HealthMeasure implements Serializable {
 	private String measureName;
 
 	private String refLevel;
-	
+
 	private String warning;
 
 	public HealthMeasure() {

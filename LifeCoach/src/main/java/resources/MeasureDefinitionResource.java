@@ -22,22 +22,23 @@ import model.dao.MeasureDefinitionDao;
 public class MeasureDefinitionResource {
 	private final MeasureDefinitionDao measureDefinitionDao = MeasureDefinitionDao
 			.getInstance();
-	
+
 	@GET
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public List<MeasureDefinition> readMeasureDefinitionByProfileType(@QueryParam("profileType") String profileType) {
-		if (profileType == null){
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public List<MeasureDefinition> readMeasureDefinitionByProfileType(
+			@QueryParam("profileType") String profileType) {
+		if (profileType == null) {
 			return measureDefinitionDao.readAll();
-		}
-		else
+		} else
 			return measureDefinitionDao.readByProfileType(profileType);
 	}
-	
+
 	@POST
-	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response createMeasureDefinition(MeasureDefinition mDef) {
-		List<MeasureDefinition> list = measureDefinitionDao.readByName(mDef.getMeasureName());
-		if (!list.isEmpty()){
+		List<MeasureDefinition> list = measureDefinitionDao.readByName(mDef
+				.getMeasureName());
+		if (!list.isEmpty()) {
 			return Response.status(Status.CONFLICT).build();
 		}
 		mDef.setMeasureDefId(0);
@@ -47,44 +48,43 @@ public class MeasureDefinitionResource {
 		else
 			return Response.notModified().build();
 	}
-	
+
 	@GET
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Path("{id}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Path("{id}")
 	public MeasureDefinition readMeasureDefinition(@PathParam("id") int id) {
 		return measureDefinitionDao.read(id);
 	}
-	
+
 	@PUT
-	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Path("{id}")
-	public Response updateMeasureDefinition(@PathParam("id") int id, MeasureDefinition mDef) {
+	public Response updateMeasureDefinition(@PathParam("id") int id,
+			MeasureDefinition mDef) {
 		MeasureDefinition oldDef = measureDefinitionDao.read(id);
-		if (oldDef == null){
+		if (oldDef == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
 		mDef.setMeasureDefId(id);
 		measureDefinitionDao.update(mDef);
 		return Response.ok(mDef, MediaType.APPLICATION_XML).build();
 	}
-	
+
 	@DELETE
-    @Path("{id}")
+	@Path("{id}")
 	public Response deleteMeasureDefinition(@PathParam("id") int id) {
 		MeasureDefinition mDef = measureDefinitionDao.read(id);
-		if (mDef == null){
+		if (mDef == null) {
 			return Response.status(Status.NOT_FOUND).build();
-		}
-		else{
+		} else {
 			measureDefinitionDao.delete(mDef);
 		}
 		mDef = measureDefinitionDao.read(id);
-		if (mDef == null){
+		if (mDef == null) {
 			return Response.ok().build();
-		}
-		else{
+		} else {
 			return Response.notModified().build();
 		}
-		
+
 	}
 }

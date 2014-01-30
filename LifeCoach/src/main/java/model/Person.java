@@ -24,40 +24,39 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"personId", "firstname", "lastname", "birthdate", "email" })
+@XmlType(propOrder = { "personId", "firstname", "lastname", "birthdate",
+		"email" })
 @Entity
-@Table(name="Person")
-@NamedQuery(name="Person.findAll", query="SELECT p FROM Person p")
+@Table(name = "Person")
+@NamedQuery(name = "Person.findAll", query = "SELECT p FROM Person p")
 public class Person implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Temporal(TemporalType.DATE)
-	@Column(name="birthdate")
-	//@Converter(name = "dateTimeConverter", converterClass = util.JodaDateTimeConverter.class)
-	//@Convert("dateTimeConverter")
+	@Column(name = "birthdate")
+	// @Converter(name = "dateTimeConverter", converterClass =
+	// util.JodaDateTimeConverter.class)
+	// @Convert("dateTimeConverter")
 	private Date birthdate;
 
-	@Column(name="email")
+	@Column(name = "email")
 	private String email;
 
-	@Column(name="firstname")
+	@Column(name = "firstname")
 	private String firstname;
 
-	@Column(name="lastname")
+	@Column(name = "lastname")
 	private String lastname;
 
 	@Id
-	@GeneratedValue(generator="sqlite_person")
-	@TableGenerator(name="sqlite_person", table="sqlite_sequence",
-	    pkColumnName="name", valueColumnName="seq",
-	    pkColumnValue="Person",
-	    initialValue=1, allocationSize=1)
-	@Column(name="personId")
+	@GeneratedValue(generator = "sqlite_person")
+	@TableGenerator(name = "sqlite_person", table = "sqlite_sequence", pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "Person", initialValue = 1, allocationSize = 1)
+	@Column(name = "personId")
 	private int personId;
 
 	@XmlTransient
-	//bi-directional many-to-one association to Measure
-	@OneToMany(mappedBy="person", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	// bi-directional many-to-one association to Measure
+	@OneToMany(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Measure> measures;
 
 	public Person() {

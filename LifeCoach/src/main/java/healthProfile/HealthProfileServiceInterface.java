@@ -12,6 +12,8 @@ import javax.jws.soap.SOAPBinding.Use;
 @WebService
 @SOAPBinding(style = Style.DOCUMENT, use = Use.LITERAL)
 public interface HealthProfileServiceInterface {
-	@WebMethod(operationName="readPersonHealthProfile")
-    public HealthProfile readPersonHealthProfile(@WebParam(name="personId") int personId, @WebParam(name="profileType") String profileType);
+	@WebMethod(operationName = "readPersonHealthProfile")
+	public HealthProfile readPersonHealthProfile(
+			@WebParam(name = "personId") int personId,
+			@WebParam(name = "profileType") String profileType);
 }

@@ -18,16 +18,17 @@ import org.xml.sax.SAXException;
 
 public class TestHealthProfileAdapter {
 	HealthProfileAdapter adapter;
-	
+
 	public TestHealthProfileAdapter() throws IOException {
 		try {
 			adapter = new HealthProfileAdapter("blood", 2);
 		} catch (IOException | SAXException | ParserConfigurationException e) {
-			System.out.println("No such profile type or person ID" + e.getLocalizedMessage());
+			System.out.println("No such profile type or person ID"
+					+ e.getLocalizedMessage());
 			assertNotNull("No such profile type or person ID", null);
 		}
 	}
-	
+
 	@Test
 	public void readHealthMeasures() {
 		List<Measure> list = adapter.readMeasures();
@@ -35,26 +36,27 @@ public class TestHealthProfileAdapter {
 		try {
 			context = JAXBContext.newInstance(Measure.class);
 			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			for (Measure m : list){
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+					Boolean.TRUE);
+			for (Measure m : list) {
 				marshaller.marshal(m, System.out);
 			}
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Test
 	public void readLevels() {
 		String level = adapter.readReferenceLevelFor("leucociti");
 		System.out.println(level);
 	}
-	
+
 	@Test
 	public void checkIfUpToDate() {
 		System.out.println(adapter.isCurrentSourceUpToDate());
 	}
-	
+
 	@Test
 	public void setUpToDate() {
 		adapter.setUpToDate();

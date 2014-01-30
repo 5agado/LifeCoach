@@ -20,39 +20,35 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"measureDefId", "measureName", "profileType"})
+@XmlType(propOrder = { "measureDefId", "measureName", "profileType" })
 @Entity
-@Table(name="MeasureDefinition")
+@Table(name = "MeasureDefinition")
 @NamedQueries({
-	@NamedQuery(name="MeasureDefinition.findAll", query="SELECT m FROM MeasureDefinition m"),
-	@NamedQuery(name="MeasureDefinition.findByName", query="SELECT m FROM MeasureDefinition m WHERE m.measureName = :measureName"),
-	@NamedQuery(name="MeasureDefinition.findByProfileType", query="SELECT m FROM MeasureDefinition m WHERE m.profileType = :profileType")
-})
+		@NamedQuery(name = "MeasureDefinition.findAll", query = "SELECT m FROM MeasureDefinition m"),
+		@NamedQuery(name = "MeasureDefinition.findByName", query = "SELECT m FROM MeasureDefinition m WHERE m.measureName = :measureName"),
+		@NamedQuery(name = "MeasureDefinition.findByProfileType", query = "SELECT m FROM MeasureDefinition m WHERE m.profileType = :profileType") })
 public class MeasureDefinition implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(generator="sqlite_measureDef")
-	@TableGenerator(name="sqlite_measureDef", table="sqlite_sequence",
-	    pkColumnName="name", valueColumnName="seq",
-	    pkColumnValue="MeasureDefinition",
-	    initialValue=1, allocationSize=1)
-	@Column(name="measureDefId")
+	@GeneratedValue(generator = "sqlite_measureDef")
+	@TableGenerator(name = "sqlite_measureDef", table = "sqlite_sequence", pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "MeasureDefinition", initialValue = 1, allocationSize = 1)
+	@Column(name = "measureDefId")
 	private int measureDefId;
 
-	@Column(name="measureName")
+	@Column(name = "measureName")
 	private String measureName;
 
 	@XmlTransient
-	@Column(name="measureType")
+	@Column(name = "measureType")
 	private String measureType;
 
-	@Column(name="profileType")
+	@Column(name = "profileType")
 	private String profileType;
 
 	@XmlTransient
-	//bi-directional many-to-one association to Measure
-	@OneToMany(mappedBy="measureDefinition")
+	// bi-directional many-to-one association to Measure
+	@OneToMany(mappedBy = "measureDefinition")
 	private List<Measure> measures;
 
 	public MeasureDefinition() {

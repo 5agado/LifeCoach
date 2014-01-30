@@ -8,13 +8,13 @@ import org.junit.Test;
 
 import util.Serializer;
 
-public class TestProfileClient {
-	private ProfileClient client = new ProfileClient("http://localhost:8080/SDE_Final_Project/rest");
-	
+public class TestResourcesClient {
+	private ResourcesClient client = new ResourcesClient();
+
 	@Test
 	public void testreadProfileGoals() {
 		List<Goal> goals = client.readProfileGoals(2, "blood");
-		for (Goal g : goals){
+		for (Goal g : goals) {
 			String goal = Serializer.marshalAsString(g);
 			System.out.println(goal);
 		}

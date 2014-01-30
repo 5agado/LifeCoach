@@ -20,15 +20,15 @@ import model.dao.PersonDao;
 @Path("/person/")
 public class PersonResource {
 	private final PersonDao personDao = PersonDao.getInstance();
-	
+
 	@GET
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<Person> readAllPersons() {
 		return personDao.readAll();
 	}
-	
+
 	@POST
-	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response createPerson(Person p) {
 		p.setPersonId(0);
 		p = personDao.create(p);
@@ -37,42 +37,40 @@ public class PersonResource {
 		else
 			return Response.notModified().build();
 	}
-	
+
 	@GET
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Path("{id}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Path("{id}")
 	public Person readPerson(@PathParam("id") int id) {
 		return personDao.read(id);
 	}
-	
+
 	@PUT
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Path("{id}")
 	public Response updatePerson(@PathParam("id") int id, Person p) {
 		Person oldP = personDao.read(id);
-		if (oldP == null){
+		if (oldP == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
 		p.setPersonId(id);
 		personDao.update(p);
 		return Response.ok(p, MediaType.APPLICATION_XML).build();
 	}
-	
+
 	@DELETE
-    @Path("{id}")
+	@Path("{id}")
 	public Response deletePerson(@PathParam("id") int id) {
 		Person p = personDao.read(id);
-		if (p == null){
+		if (p == null) {
 			return Response.status(Status.NOT_FOUND).build();
-		}
-		else{
+		} else {
 			personDao.delete(p);
 		}
 		p = personDao.read(id);
-		if (p == null){
+		if (p == null) {
 			return Response.ok().build();
-		}
-		else{
+		} else {
 			return Response.notModified().build();
 		}
 	}

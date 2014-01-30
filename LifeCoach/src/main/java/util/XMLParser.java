@@ -100,7 +100,8 @@ public class XMLParser {
 					XPathConstants.STRING).toString();
 			return attributeValue;
 		} catch (XPathExpressionException e) {
-			LOGGER.log(Level.WARNING, "No such Attribute", e.getLocalizedMessage());
+			LOGGER.log(Level.WARNING, "No such Attribute",
+					e.getLocalizedMessage());
 			return "";
 		}
 	}
@@ -128,7 +129,8 @@ public class XMLParser {
 			transformer.transform(source, result);
 			return true;
 		} catch (TransformerException e) {
-			LOGGER.log(Level.WARNING, "Stream saving failed", e.getLocalizedMessage());
+			LOGGER.log(Level.WARNING, "Stream saving failed",
+					e.getLocalizedMessage());
 			return false;
 		}
 	}

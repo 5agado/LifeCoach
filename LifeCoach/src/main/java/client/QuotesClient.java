@@ -31,24 +31,24 @@ public class QuotesClient extends RESTClient {
 	private final static String TOKEN_ID_PARAM_NAME = "tokenid";
 	private final static String TOKEN_ID = "bWAk5ZTzdcuYzYEC";
 	private final static String SEARCH_TYPE_PARAM_NAME = "searchtype";
-	
+
 	private final static String THEY_SAID_SO_URL = "http://api.theysaidso.com/qod.xml";
-	
+
 	private final static String IHEART_URL = "http://www.iheartquotes.com/api/v1/random?format=xml";
-	
+
 	private final static String XML_QUOTE_ELEMENT = "quote";
-	private final static String XML_AUTHOR_ELEMENT = "author";	
-	
+	private final static String XML_AUTHOR_ELEMENT = "author";
+
 	public QuotesClient() {
 		super("");
 	}
-	
-	//Sample: http://www.stands4.com/services/v2/quotes.php?
-	//uid=1001&tokenid=tk324324324&searchtype=RANDOM
+
+	// Sample: http://www.stands4.com/services/v2/quotes.php?
+	// uid=1001&tokenid=tk324324324&searchtype=RANDOM
 	public String getRandomQuote() {
 		final String SEARCH_TYPE = "RANDOM";
-		
-		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl(); 
+
+		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
 		queryParams.add(USER_ID_PARAM_NAME, USER_ID);
 		queryParams.add(TOKEN_ID_PARAM_NAME, TOKEN_ID);
 		queryParams.add(SEARCH_TYPE_PARAM_NAME, SEARCH_TYPE);
@@ -56,32 +56,33 @@ public class QuotesClient extends RESTClient {
 		if (response.getStatus() == 200) {
 			String quote = readQuote(response);
 			return quote;
-		}	
-		
+		}
+
 		response = executeGET(THEY_SAID_SO_URL, new MultivaluedMapImpl());
 		if (response.getStatus() == 200) {
 			String quote = readQuote(response);
 			return quote;
-		}	
-		
+		}
+
 		response = executeGET(IHEART_URL, new MultivaluedMapImpl());
 		if (response.getStatus() == 200) {
 			String quote = readQuote(response);
 			return quote;
-		}	
-		
-		return "";		
+		}
+
+		return "";
 	}
-	
+
 	private String readQuote(ClientResponse response) {
 		String res = response.getEntity(String.class);
 		String quote = extractElement(res, XML_QUOTE_ELEMENT);
 		String author = extractElement(res, XML_AUTHOR_ELEMENT);
 		return "\"" + quote + "\" " + author;
 	}
-	
+
 	private String extractElement(String response, String elementName) {
-		InputStream input = new ByteArrayInputStream(response.getBytes(StandardCharsets.UTF_8));
+		InputStream input = new ByteArrayInputStream(
+				response.getBytes(StandardCharsets.UTF_8));
 		XMLParser adapter;
 		try {
 			adapter = new XMLParser(input);

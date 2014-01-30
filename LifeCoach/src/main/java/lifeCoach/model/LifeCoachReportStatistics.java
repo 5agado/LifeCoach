@@ -9,24 +9,25 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement
-@XmlAccessorType (XmlAccessType.FIELD)
-@XmlType(propOrder = {"numGoals", "successes", "failures", "stillInprogress"})
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "numGoals", "successes", "failures", "stillInprogress" })
 public class LifeCoachReportStatistics implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@XmlElement(name = "goals_number")
 	int numGoals;
-	
+
 	@XmlElement(name = "successes")
 	int successes;
-	
+
 	@XmlElement(name = "failures")
 	int failures;
-	
+
 	@XmlElement(name = "still_in_progress")
 	int stillInprogress;
-	
-	public LifeCoachReportStatistics() {}
+
+	public LifeCoachReportStatistics() {
+	}
 
 	public int getNumGoals() {
 		return numGoals;

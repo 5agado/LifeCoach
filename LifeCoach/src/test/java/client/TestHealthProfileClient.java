@@ -15,8 +15,9 @@ public class TestHealthProfileClient {
 	private static final String SERVICE_URL = "http://localhost:8081/ws/healthProfile?wsdl";
 	private static final String SERVICE_URI = "http://healthProfile/";
 	private static final String SERVICE_NAME = "HealthProfileService";
+
 	// http://test.lifeparticipation.org/introsde2013/SERVER_PORT/
-	
+
 	@Test
 	public void testHealthProfileClient() {
 		HealthProfileClient client = null;
@@ -27,24 +28,24 @@ public class TestHealthProfileClient {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		
+
 		System.out.println("Starting server testing via HealthProfileClient\n");
 		System.out.print("\ngetAndOutputPerson: ");
 		HealthProfile profile = client.readPersonHealthProfile(1, "blood");
-		if (profile == null){
+		if (profile == null) {
 			System.out.println("null");
-		}
-		else {
+		} else {
 			outputHealthProfile(profile);
 		}
 	}
-	
+
 	private static void outputHealthProfile(HealthProfile profile) {
 		JAXBContext context;
 		try {
 			context = JAXBContext.newInstance(HealthProfile.class);
 			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+					Boolean.TRUE);
 			marshaller.marshal(profile, System.out);
 		} catch (JAXBException e) {
 			e.printStackTrace();

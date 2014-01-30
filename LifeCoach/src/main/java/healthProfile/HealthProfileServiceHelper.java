@@ -19,7 +19,7 @@ import model.Person;
 
 import org.xml.sax.SAXException;
 
-import client.ProfileClient;
+import client.ResourcesClient;
 
 public class HealthProfileServiceHelper {
 	private final static String WARNING_LOW = "*";
@@ -28,30 +28,30 @@ public class HealthProfileServiceHelper {
 	private final static int ILLNESS_WARNING_LOW = 1;
 	private final static int ILLNESS_WARNING_MEDIUM = 2;
 	private final static int ILLNESS_WARNING_HIGH = 4;
-	private final static Logger LOGGER = Logger.getLogger(HealthProfileServiceHelper.class.getName());
-	
-	private ProfileClient client = new ProfileClient("http://localhost:8080/SDE_Final_Project/rest");
+	private final static Logger LOGGER = Logger
+			.getLogger(HealthProfileServiceHelper.class.getName());
+
+	private ResourcesClient client = new ResourcesClient();
 	private HealthProfileAdapter adapter;
-	
-	public HealthProfileServiceHelper() {
-		client.setDebugEnabled(true);
-	}
-	
-	public HealthProfile readPersonHealthProfile(int personId, String profileType) {		
+
+	public HealthProfileServiceHelper() {}
+
+	public HealthProfile readPersonHealthProfile(int personId,
+			String profileType) {
 		HealthProfile profile = new HealthProfile();
-		
-		if (profileType == null || profileType.isEmpty()){
+
+		if (profileType == null || profileType.isEmpty()) {
 			return null;
 		}
-		
+
 		Person person = client.readPerson(personId);
-		if (person == null){
+		if (person == null) {
 			return null;
 		}
-		
+
 		profile.setPerson(person);
 		profile.setTimestamp(new Date());
-		
+
 		try {
 			adapter = new HealthProfileAdapter(profileType, personId);
 		} catch (IOException e) {
@@ -64,59 +64,62 @@ public class HealthProfileServiceHelper {
 			LOGGER.log(Level.WARNING, "ParserConfigurationException", e);
 			return profile;
 		}
-		
-		if (!adapter.isCurrentSourceUpToDate()){
+
+		if (!adapter.isCurrentSourceUpToDate()) {
 			updateRemoteMeasures(personId);
 		}
-		
-		List<Measure> remoteMeasures = client.readProfile(personId, profileType);
-		
-		if (remoteMeasures == null || remoteMeasures.isEmpty()){
+
+		List<Measure> remoteMeasures = client
+				.readProfileMeasures(personId, profileType);
+
+		if (remoteMeasures == null || remoteMeasures.isEmpty()) {
 			return profile;
 		}
-		
+
 		List<HealthMeasure> healthMeasures = computeAndGetMeasuresFrom(remoteMeasures);
-		
+
 		profile.setMeasures(healthMeasures);
-		
+
 		HealthProfileSuggestions suggestions = getSuggestionForProfile(profile);
-		
+
 		profile.setSuggestions(suggestions);
-		
+
 		return profile;
 	}
-	
-	private void updateRemoteMeasures(int personId){
-		//Measure without measureDef id
+
+	private void updateRemoteMeasures(int personId) {
+		// Measure without measureDef id
 		List<Measure> newMeasures = adapter.readMeasures();
-		for (Measure m : newMeasures){
+		for (Measure m : newMeasures) {
 			Date date = Calendar.getInstance().getTime();
 			m.setTimestamp(date);
 			client.createMeasure(m, personId);
 		}
 		adapter.setUpToDate();
 	}
-	
-	private List<HealthMeasure> computeAndGetMeasuresFrom(List<Measure> remoteMeasureList){
+
+	private List<HealthMeasure> computeAndGetMeasuresFrom(
+			List<Measure> remoteMeasureList) {
 		List<HealthMeasure> measures = new ArrayList<HealthMeasure>();
-		for (Measure m : remoteMeasureList){
+		for (Measure m : remoteMeasureList) {
 			HealthMeasure hm = new HealthMeasure();
 			hm.setValue(m.getValue());
 			hm.setMeasureName(m.getMeasureDefinition().getMeasureName());
-			hm.setRefLevel(adapter.readReferenceLevelFor(m.getMeasureDefinition().getMeasureName()));
+			hm.setRefLevel(adapter.readReferenceLevelFor(m
+					.getMeasureDefinition().getMeasureName()));
 			computeAndSetWarningLevelFor(hm);
 			measures.add(hm);
 		}
-		
+
 		return measures;
 	}
-	
-	private void computeAndSetWarningLevelFor(HealthMeasure measure){		
-		if (measure.getRefLevel().isEmpty()){
+
+	private void computeAndSetWarningLevelFor(HealthMeasure measure) {
+		if (measure.getRefLevel().isEmpty()) {
 			measure.setWarning(null);
 			return;
 		}
-		
+
 		String[] minMax = measure.getRefLevel().split("-");
 		double min;
 		double max;
@@ -128,35 +131,31 @@ public class HealthProfileServiceHelper {
 			measure.setWarning(null);
 			return;
 		}
-		
+
 		double range = max - min;
 		double diff = 0;
 		double measureValue = Double.valueOf(measure.getValue());
-		if (measureValue < min){
+		if (measureValue < min) {
 			diff = Math.abs(min - measureValue);
-		}
-		else if (measureValue > max){
+		} else if (measureValue > max) {
 			diff = Math.abs(measureValue - max);
-		} 
-		
-		if (diff == 0){
+		}
+
+		if (diff == 0) {
 			measure.setWarning("");
-		}
-		else if (diff < (range/2)){
+		} else if (diff < (range / 2)) {
 			measure.setWarning(WARNING_LOW);
-		}
-		else if (diff < (range)){
+		} else if (diff < (range)) {
 			measure.setWarning(WARNING_MEDIUM);
-		}
-		else if (diff > (range)){
+		} else if (diff > (range)) {
 			measure.setWarning(WARNING_HIGH);
-		}
-		else {
+		} else {
 			LOGGER.log(Level.INFO, "Missed warning level option");
 		}
 	}
-	
-	private HealthProfileSuggestions getSuggestionForProfile (HealthProfile profile){		
+
+	private HealthProfileSuggestions getSuggestionForProfile(
+			HealthProfile profile) {
 		HealthProfileSuggestions suggestions = new HealthProfileSuggestions();
 		List<String> advice = new ArrayList<String>();
 
@@ -164,9 +163,9 @@ public class HealthProfileServiceHelper {
 		int profileIllness = 0;
 		int numMeasures = 0;
 		List<HealthMeasure> measures = profile.getMeasures();
-		for (HealthMeasure m : measures){
+		for (HealthMeasure m : measures) {
 			String wLevel = m.getWarning();
-			if (wLevel == null){
+			if (wLevel == null) {
 				continue;
 			}
 			numMeasures++;
@@ -191,8 +190,8 @@ public class HealthProfileServiceHelper {
 				break;
 			}
 		}
-		
-		profileIllness = profileIllness/numMeasures;
+
+		profileIllness = profileIllness / numMeasures;
 		suggestions.setNumMeasures(measures.size());
 		suggestions.setNumDetailedMeasures(numMeasures);
 		suggestions.setLowW(numWL);

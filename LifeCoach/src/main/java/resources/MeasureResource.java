@@ -1,19 +1,25 @@
 package resources;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import util.Utils;
 import model.Measure;
 import model.MeasureDefinition;
 import model.Person;
@@ -29,9 +35,11 @@ public class MeasureResource {
 			.getInstance();
 
 	@GET
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<Measure> readAllMeasures(@PathParam("id") int personId,
-			@PathParam("measure") String measureName) {
+			@PathParam("measure") String measureName,
+			@QueryParam("before") @DefaultValue("") String before,
+			@QueryParam("after") @DefaultValue("") String after) {
 		Person p = personDao.read(personId);
 		if (p == null) {
 			return null;
@@ -41,12 +49,18 @@ public class MeasureResource {
 		if (list.isEmpty()) {
 			return null;
 		}
+		if (!before.isEmpty() || !after.isEmpty()) {
+	        Date beforeDate = Utils.convertDateFrom(before);
+	        Date afterDate = Utils.convertDateFrom(after);
+			return measureDao.readAllByPersonDefinitionAndDate(personId, list
+					.get(0).getMeasureDefId(), beforeDate, afterDate);
+		}
 		return measureDao.readAllByPersonAndDefinition(personId, list.get(0)
 				.getMeasureDefId());
 	}
 
 	@POST
-	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response createMeasure(Measure measure,
 			@PathParam("id") int personId,
 			@PathParam("measure") String measureName) {
@@ -70,7 +84,7 @@ public class MeasureResource {
 	}
 
 	@GET
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Path("{mid}")
 	public Measure readMeasure(@PathParam("id") int personId,
 			@PathParam("measure") String measureName,
@@ -90,7 +104,8 @@ public class MeasureResource {
 
 	@PUT
 	@Path("{mid}")
-	@Consumes@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Consumes
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updateMeasure(Measure measure,
 			@PathParam("id") int personId,
 			@PathParam("measure") String measureName,
@@ -135,8 +150,7 @@ public class MeasureResource {
 		m = measureDao.read(measureId);
 		if (m == null) {
 			return Response.ok().build();
-		}
-		else
+		} else
 			return Response.notModified().build();
 	}
 }
