@@ -91,4 +91,13 @@ public class ResourcesClient extends RESTClient {
 		String quote = response.getEntity(String.class);
 		return quote;
 	}
+	
+	public String getMotivational(String personName) {
+		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
+		queryParams.add("personName", personName);
+		ClientResponse response = executeGET("/phrases/motivational",
+				queryParams);
+		String phrase = response.getEntity(String.class);
+		return phrase;
+	}
 }

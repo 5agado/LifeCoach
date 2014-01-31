@@ -1,5 +1,7 @@
 !!finest for logginh RESTClient
 
+!!use relative path for db
+
 !!add local incentive phrases with person name
 
 !!Expose a service for the HealthProfile in order to retrieve or upload a file resource

@@ -45,7 +45,7 @@ public class HealthProfileAdapter {
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node currentNode = nodeList.item(i);
 			Measure measure = new Measure();
-			XMLMeasure xmlMeasure = (XMLMeasure) Serializer.unmarshal(
+			XMLMeasure xmlMeasure = Serializer.unmarshal(
 					XMLMeasure.class, currentNode);
 			if (xmlMeasure == null) {
 				continue;
@@ -67,7 +67,7 @@ public class HealthProfileAdapter {
 		if (node == null) {
 			return "";
 		}
-		XMLevel level = (XMLevel) Serializer.unmarshal(XMLevel.class, node);
+		XMLevel level = Serializer.unmarshal(XMLevel.class, node);
 		return level.toString();
 	}
 
@@ -78,7 +78,7 @@ public class HealthProfileAdapter {
 		if (node == null) {
 			return "";
 		}
-		XMLAdvice advice = (XMLAdvice) Serializer.unmarshal(XMLAdvice.class,
+		XMLAdvice advice = Serializer.unmarshal(XMLAdvice.class,
 				node);
 		return advice.getContent();
 	}

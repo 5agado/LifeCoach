@@ -14,7 +14,8 @@ public class LifeCoachLogicClient extends RESTClient {
 	private static final String REQUEST_URL = "http://localhost:8080/SDE_Final_Project/rest/";
 	//"http://localhost:5031/";
 	private static final String PROFILE_TYPE_QUERY_NAME = "profileType";
-	private static final String PERSONID_TYPE_QUERY_NAME = "personId";
+	private static final String PERSONID_QUERY_NAME = "personId";
+	private static final String GOALSTATEFILTER_QUERY_NAME = "goalStateFilter";
 
 	public LifeCoachLogicClient() {
 		super(REQUEST_URL);
@@ -25,10 +26,11 @@ public class LifeCoachLogicClient extends RESTClient {
 	}
 
 	public List<LifeCoachMeasure> getLifeCoachMeasures(int personId,
-			String profileType) {
+			String profileType, String goalStateFilter) {
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
 		queryParams.add(PROFILE_TYPE_QUERY_NAME, profileType);
-		queryParams.add(PERSONID_TYPE_QUERY_NAME, String.valueOf(personId));
+		queryParams.add(PERSONID_QUERY_NAME, String.valueOf(personId));
+		queryParams.add(GOALSTATEFILTER_QUERY_NAME, goalStateFilter);
 		ClientResponse response = executeGET("/lifeCoachLogic/measures",
 				queryParams);
 		List<LifeCoachMeasure> measures = extractEntityWrapper(response,
@@ -40,7 +42,7 @@ public class LifeCoachLogicClient extends RESTClient {
 			String profileType) {
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
 		queryParams.add(PROFILE_TYPE_QUERY_NAME, profileType);
-		queryParams.add(PERSONID_TYPE_QUERY_NAME, String.valueOf(personId));
+		queryParams.add(PERSONID_QUERY_NAME, String.valueOf(personId));
 		ClientResponse response = executeGET("/lifeCoachLogic/statistics",
 				queryParams);
 		LifeCoachReportStatistics stats = extractEntity(response,

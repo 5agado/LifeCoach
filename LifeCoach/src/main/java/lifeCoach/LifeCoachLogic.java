@@ -36,7 +36,8 @@ public class LifeCoachLogic {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<LifeCoachMeasure> computeAndGetLifeCoachMeasures(
 			@QueryParam("personId") int personId,
-			@QueryParam("profileType") String profileType) {
+			@QueryParam("profileType") String profileType,
+			@QueryParam("goalStatusFilter") String goalStatusFilter) {
 		if (personId == 0) {
 			return null;
 		}
@@ -65,11 +66,20 @@ public class LifeCoachLogic {
 					continue;
 				}
 				Measure goalMostRecentMeasure = measuresBeforeGoal.get(0);
+				String goalState = computeAndGetGoalCurrentState(g, goalMostRecentMeasure);
+				
+				//if the case, filter by goal state
+				if (goalStatusFilter!= null && !goalStatusFilter.isEmpty()){
+					String[] stateParts = goalState.split("-");
+					String status = stateParts[0].trim();
+					if (!status.equalsIgnoreCase(goalStatusFilter)){
+						continue;
+					}
+				}				
 				
 				LifeCoachMeasure lifeM = new LifeCoachMeasure();
 				lifeM.setMeasureName(goalMostRecentMeasure.getMeasureDefinition().getMeasureName());
 				lifeM.setValue(goalMostRecentMeasure.getValue());
-				String goalState = computeAndGetGoalCurrentState(g, goalMostRecentMeasure);
 				goalsStatusDescription.add(goalState);
 				lifeM.setGoals(goals);
 				lifeM.setGoalsStatusDescription(goalsStatusDescription);
@@ -87,7 +97,7 @@ public class LifeCoachLogic {
 			@QueryParam("personId") int personId,
 			@QueryParam("profileType") String profileType) {
 		List<LifeCoachMeasure> measures = computeAndGetLifeCoachMeasures(
-				personId, profileType);
+				personId, profileType, null);
 		LifeCoachReportStatistics stats = new LifeCoachReportStatistics();
 		int numGoals = 0;
 		int numS = 0, numF = 0, numP = 0;

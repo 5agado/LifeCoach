@@ -2,8 +2,12 @@ package businessLogic;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import lifeCoach.LifeCoachLogic;
 import model.Goal;
@@ -12,6 +16,11 @@ import model.dao.GoalDao;
 import model.dao.MeasureDao;
 
 import org.junit.Test;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import util.XMLParser;
 
 public class TestLifeCoachLogic {
 	@Test
@@ -40,5 +49,18 @@ public class TestLifeCoachLogic {
 		Date d3 = c.getTime();
 
 		//System.out.println(LifeCoachLogic.computeIntervalPercentage(d1, d2, d3));
+	}
+	
+	@Test
+	public void testMotivational() {
+		Random r = new Random();
+		XMLParser parser = null;
+		try {
+			parser = new XMLParser("src/main/resources/motivationalPhrases.xml");
+		} catch (IOException | SAXException | ParserConfigurationException e) {
+			System.out.println("No motivational");
+		}
+		NodeList nodeList  = parser.readNodeList("/phrases/phrase");
+		Node randomNode = nodeList.item(r.nextInt(nodeList.getLength()));
 	}
 }
