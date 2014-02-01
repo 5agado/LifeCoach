@@ -133,7 +133,7 @@ public class TestDao {
 	@Test
 	public void createProfileMeasure() {
 		Random r = new Random();
-		Person p = PersonDao.getInstance().read(11);
+		Person p = PersonDao.getInstance().read(1);
 		assertNotNull("The person is not here", p);
 		List<MeasureDefinition> profileMeasureDef = MeasureDefinitionDao
 				.getInstance().readByProfileType("crossfit");
@@ -164,7 +164,7 @@ public class TestDao {
 			g.setComparator("GT");
 			g.setDescription(def.getMeasureName());
 			g.setTimestamp(new Date());
-			g.setValue("50");
+			g.setValue(String.valueOf(r.nextInt(100) + 50));
 			Calendar c = Calendar.getInstance();
 			int year = r.nextInt(10) + 2010;
 			int month = r.nextInt(12) + 1;
@@ -177,7 +177,7 @@ public class TestDao {
 
 	@Test
 	public void popolateDatabasePerson() {
-		final int MAX_PEOPLE = 10;
+		final int MAX_PEOPLE = 25;
 		Random r = new Random();
 
 		int numPeople = 0;
@@ -195,7 +195,7 @@ public class TestDao {
 				String second = parts[1].substring(1, parts[1].length() - 1);
 				String mail = parts[parts.length - 2].substring(1,
 						parts[parts.length - 2].length() - 1);
-
+				
 				Person person = new Person();
 				person.setFirstname(first);
 				person.setLastname(second);

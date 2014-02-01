@@ -51,7 +51,7 @@ public class MeasureDao extends DaoJpaImpl<Measure, Integer> {
 		if (beforeDate == null) {
 			query = "SELECT m FROM Measure m WHERE m.person.personId = :pId "
 					+ "AND m.measureDefinition.measureDefId = :mDefId "
-					+ "AND m.timestamp < :aDate "
+					+ "AND m.timestamp > :aDate "
 					+ "ORDER BY m.timestamp DESC ";
 			list = entityManager.createQuery(query, Measure.class)
 					.setParameter("pId", personId)
@@ -61,7 +61,7 @@ public class MeasureDao extends DaoJpaImpl<Measure, Integer> {
 		} else if (afterDate == null) {
 			query = "SELECT m FROM Measure m WHERE m.person.personId = :pId "
 					+ "AND m.measureDefinition.measureDefId = :mDefId "
-					+ "AND m.timestamp > :bDate "
+					+ "AND m.timestamp < :bDate "
 					+ "ORDER BY m.timestamp DESC ";
 			list = entityManager.createQuery(query, Measure.class)
 					.setParameter("pId", personId)
@@ -71,7 +71,7 @@ public class MeasureDao extends DaoJpaImpl<Measure, Integer> {
 		} else {
 			query = "SELECT m FROM Measure m WHERE m.person.personId = :pId "
 					+ "AND m.measureDefinition.measureDefId = :mDefId "
-					+ "AND m.timestamp > :bDate AND m.timestamp < :aDate "
+					+ "AND m.timestamp < :bDate AND m.timestamp > :aDate "
 					+ "ORDER BY m.timestamp DESC ";
 			list = entityManager.createQuery(query, Measure.class)
 					.setParameter("pId", personId)

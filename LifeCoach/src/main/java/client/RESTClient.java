@@ -35,7 +35,7 @@ public class RESTClient {
 		this.webResource = client.resource(serverUri);
 	}
 
-	protected ClientResponse executeGET(String getPath,
+	public ClientResponse executeGET(String getPath,
 			MultivaluedMap<String, String> queryParams) {
 		if (queryParams == null) {
 			queryParams = new MultivaluedMapImpl();
@@ -51,44 +51,33 @@ public class RESTClient {
 		return response;
 	}
 
-	protected ClientResponse executePOST(String postPath) {
-		LOGGER.log(Level.INFO, "Executing POST to: " + serverUri.toString()
-				+ postPath);
-
-		ClientResponse response = webResource.path(postPath)
-				.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
-				.post(ClientResponse.class);
-
-		return response;
-	}
-
-	protected ClientResponse executePOSTWithRequestEntity(String postPath,
+	public ClientResponse executePOST(String postPath,
 			Object reqEntity) {
 		LOGGER.log(Level.INFO, "Executing POST to: " + serverUri.toString()
 					+ postPath);
 		LOGGER.log(Level.INFO, "Request entity: " + reqEntity.toString());
-			System.out.println();
 
 		ClientResponse response = webResource.path(postPath)
 				.type(MediaType.APPLICATION_XML_TYPE)
-				.type(MediaType.APPLICATION_JSON_TYPE)
 				.post(ClientResponse.class, reqEntity);
 
 		return response;
 	}
 
-	protected ClientResponse executePUT(String putPath) {
+	public ClientResponse executePUT(String putPath,
+			Object reqEntity) {
 		LOGGER.log(Level.INFO, "Executing PUT to: " + serverUri.toString()
-					+ putPath);			
+					+ putPath);		
+		LOGGER.log(Level.INFO, "Request entity: " + reqEntity.toString());
 
 		ClientResponse response = webResource.path(putPath)
-				.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
-				.put(ClientResponse.class);
+				.type(MediaType.APPLICATION_XML_TYPE)
+				.put(ClientResponse.class, reqEntity);
 
 		return response;
 	}
 
-	protected ClientResponse executeDELETE(String deletePath) {
+	public ClientResponse executeDELETE(String deletePath) {
 		LOGGER.log(Level.INFO, "Executing DELETE to: " + serverUri.toString()
 				+ deletePath);
 		ClientResponse response = webResource.path(deletePath).delete(

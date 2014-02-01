@@ -16,7 +16,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 public class ResourcesClient extends RESTClient {
 	private static final String PROFILE_TYPE_QUERY_NAME = "profileType";
 	private static final String REQUEST_URL = "http://localhost:8080/SDE_Final_Project/rest";
-	//"http://localhost:5030/";
+	//"http://localhost:5030";
 
 	public ResourcesClient() {
 		super(REQUEST_URL);
@@ -27,7 +27,7 @@ public class ResourcesClient extends RESTClient {
 	}
 
 	public void createMeasure(Measure measure, int personId) {
-		executePOSTWithRequestEntity("/person/" + personId + "/"
+		executePOST("/person/" + personId + "/"
 				+ measure.getMeasureDefinition().getMeasureName(), measure);
 	}
 

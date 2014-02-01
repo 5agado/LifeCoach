@@ -2,7 +2,8 @@
 
 !!use relative path for db
 
-!!add local incentive phrases with person name
+!!suggest to register a measure if too much time passed or if no measure before goal
+(add to statistics)
 
 !!Expose a service for the HealthProfile in order to retrieve or upload a file resource
 

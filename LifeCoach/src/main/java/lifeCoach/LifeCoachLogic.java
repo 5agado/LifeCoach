@@ -81,7 +81,7 @@ public class LifeCoachLogic {
 				lifeM.setMeasureName(goalMostRecentMeasure.getMeasureDefinition().getMeasureName());
 				lifeM.setValue(goalMostRecentMeasure.getValue());
 				goalsStatusDescription.add(goalState);
-				lifeM.setGoals(goals);
+				lifeM.setGoal(g);
 				lifeM.setGoalsStatusDescription(goalsStatusDescription);
 				measures.add(lifeM);
 			}

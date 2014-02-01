@@ -76,6 +76,9 @@ public class MeasureResource {
 		measure.setMeasureDefinition(list.get(0));
 		measure.setPerson(p);
 		measure.setMeasureId(0);
+		if (measure.getTimestamp() == null){
+			measure.setTimestamp(new Date());
+		}
 		measure = measureDao.create(measure);
 		if (measure != null)
 			return Response.ok(measure, MediaType.APPLICATION_XML).build();
@@ -124,6 +127,9 @@ public class MeasureResource {
 			return Response.status(Status.NOT_FOUND).build();
 		}
 		measure.setMeasureId(measureId);
+		if (measure.getTimestamp() == null){
+			measure.setTimestamp(new Date());
+		}
 		measureDao.update(measure);
 		return Response.ok(measure, MediaType.APPLICATION_XML).build();
 	}
