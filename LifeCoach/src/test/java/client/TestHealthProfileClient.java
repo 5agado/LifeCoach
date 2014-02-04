@@ -12,7 +12,7 @@ import javax.xml.namespace.QName;
 import org.junit.Test;
 
 public class TestHealthProfileClient {
-	private static final String SERVICE_URL = "http://localhost:8081/ws/healthProfile?wsdl";
+	private static final String SERVICE_URL = "http://localhost:5031/ws/healthProfile?wsdl";
 	private static final String SERVICE_URI = "http://healthProfile/";
 	private static final String SERVICE_NAME = "HealthProfileService";
 

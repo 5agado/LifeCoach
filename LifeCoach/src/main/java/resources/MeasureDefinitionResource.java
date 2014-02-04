@@ -36,6 +36,9 @@ public class MeasureDefinitionResource {
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response createMeasureDefinition(MeasureDefinition mDef) {
+		if (!isMeasureDefValid(mDef)) {
+			return Response.notAcceptable(null).build();
+		}
 		List<MeasureDefinition> list = measureDefinitionDao.readByName(mDef
 				.getMeasureName());
 		if (!list.isEmpty()) {
@@ -65,6 +68,14 @@ public class MeasureDefinitionResource {
 		if (oldDef == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
+		if (!isMeasureDefValid(mDef)) {
+			return Response.notAcceptable(null).build();
+		}
+		List<MeasureDefinition> list = measureDefinitionDao.readByName(mDef
+				.getMeasureName());
+		if (!list.isEmpty()) {
+			return Response.status(Status.CONFLICT).build();
+		}
 		mDef.setMeasureDefId(id);
 		measureDefinitionDao.update(mDef);
 		return Response.ok(mDef, MediaType.APPLICATION_XML).build();
@@ -86,5 +97,16 @@ public class MeasureDefinitionResource {
 			return Response.notModified().build();
 		}
 
+	}
+
+	private boolean isMeasureDefValid(MeasureDefinition def) {
+		if (def.getMeasureName() == null || def.getMeasureName().isEmpty()) {
+			return false;
+		}
+		if (def.getProfileType() == null || def.getProfileType().isEmpty()) {
+			return false;
+		}
+
+		return true;
 	}
 }

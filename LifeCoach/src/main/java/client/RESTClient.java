@@ -40,9 +40,9 @@ public class RESTClient {
 		if (queryParams == null) {
 			queryParams = new MultivaluedMapImpl();
 		}
-		
-		LOGGER.log(Level.INFO, "Executing GET to: " + serverUri.toString()
-			+ getPath + "?" + queryParams.toString());
+
+		LOGGER.log(Level.FINE, "Executing GET to: " + serverUri.toString()
+				+ getPath + "?" + queryParams.toString());
 
 		ClientResponse response = webResource.queryParams(queryParams)
 				.path(getPath).accept(MediaType.APPLICATION_XML)
@@ -51,11 +51,10 @@ public class RESTClient {
 		return response;
 	}
 
-	public ClientResponse executePOST(String postPath,
-			Object reqEntity) {
-		LOGGER.log(Level.INFO, "Executing POST to: " + serverUri.toString()
-					+ postPath);
-		LOGGER.log(Level.INFO, "Request entity: " + reqEntity.toString());
+	public ClientResponse executePOST(String postPath, Object reqEntity) {
+		LOGGER.log(Level.FINE, "Executing POST to: " + serverUri.toString()
+				+ postPath);
+		LOGGER.log(Level.FINE, "Request entity: " + reqEntity.toString());
 
 		ClientResponse response = webResource.path(postPath)
 				.type(MediaType.APPLICATION_XML_TYPE)
@@ -64,11 +63,10 @@ public class RESTClient {
 		return response;
 	}
 
-	public ClientResponse executePUT(String putPath,
-			Object reqEntity) {
-		LOGGER.log(Level.INFO, "Executing PUT to: " + serverUri.toString()
-					+ putPath);		
-		LOGGER.log(Level.INFO, "Request entity: " + reqEntity.toString());
+	public ClientResponse executePUT(String putPath, Object reqEntity) {
+		LOGGER.log(Level.FINE, "Executing PUT to: " + serverUri.toString()
+				+ putPath);
+		LOGGER.log(Level.FINE, "Request entity: " + reqEntity.toString());
 
 		ClientResponse response = webResource.path(putPath)
 				.type(MediaType.APPLICATION_XML_TYPE)
@@ -78,7 +76,7 @@ public class RESTClient {
 	}
 
 	public ClientResponse executeDELETE(String deletePath) {
-		LOGGER.log(Level.INFO, "Executing DELETE to: " + serverUri.toString()
+		LOGGER.log(Level.FINE, "Executing DELETE to: " + serverUri.toString()
 				+ deletePath);
 		ClientResponse response = webResource.path(deletePath).delete(
 				ClientResponse.class);
@@ -88,7 +86,7 @@ public class RESTClient {
 
 	protected <T> T extractEntity(ClientResponse response, Class<T> objClass) {
 		if (response.getStatus() != 200) {
-			LOGGER.log(Level.INFO, "Http error code = " + response.getStatus());
+			LOGGER.log(Level.WARNING, "Http error code = " + response.getStatus());
 			return null;
 		}
 
@@ -100,7 +98,7 @@ public class RESTClient {
 	protected <T> List<T> extractEntityWrapper(ClientResponse response,
 			Class<T> objClass) {
 		if (response.getStatus() != 200) {
-			LOGGER.log(Level.INFO, "Http error code = " + response.getStatus());
+			LOGGER.log(Level.WARNING, "Http error code = " + response.getStatus());
 			return null;
 		}
 

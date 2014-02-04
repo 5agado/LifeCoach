@@ -59,6 +59,9 @@ public class GoalResource {
 		if (list.isEmpty()) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
+		if (!isGoalValid(goal)) {
+			return Response.notAcceptable(null).build();
+		}
 		goal.setTimestamp(new Date());
 		goal.setMeasureDefinition(list.get(0));
 		goal.setPerson(p);
@@ -76,46 +79,48 @@ public class GoalResource {
 	public Goal readGoal(@PathParam("id") int personId,
 			@PathParam("measure") String measureName,
 			@PathParam("gid") int goalId) {
-		Person p = personDao.read(personId);
-		if (p == null) {
-			return null;
-		}
 		List<MeasureDefinition> list = measureDefinitionDao
 				.readByName(measureName);
 		if (list.isEmpty()) {
 			return null;
 		}
-		Goal g = goalDao.read(goalId);
+		Goal g = goalDao.readByConstraints(personId, list.get(0)
+				.getMeasureDefId(), goalId);
 		return g;
 	}
 
 	@PUT
 	@Path("{gid}")
-	@Consumes
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updateGoal(Goal goal, @PathParam("id") int personId,
 			@PathParam("measure") String measureName,
 			@PathParam("gid") int goalId) {
-		Person p = personDao.read(personId);
-		if (p == null) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
 		List<MeasureDefinition> list = measureDefinitionDao
 				.readByName(measureName);
 		if (list.isEmpty()) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
-		Goal g = goalDao.read(goalId);
+		Goal g = goalDao.readByConstraints(personId, list.get(0)
+				.getMeasureDefId(), goalId);
 		if (g == null) {
 			return Response.status(Status.NOT_FOUND).build();
+		}
+		Person p = personDao.read(personId);
+		if (p == null) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+		if (!isGoalValid(goal)) {
+			return Response.notAcceptable(null).build();
 		}
 
 		// Here we decided to keep the previous timestamp
 		// i.e.: when the goal we are going to modify has been created
 		goal.setTimestamp(g.getTimestamp());
+		goal.setMeasureDefinition(list.get(0));
 		goal.setGoalId(goalId);
-		goalDao.update(g);
-		return Response.ok(g, MediaType.APPLICATION_XML).build();
+		goal.setPerson(p);
+		goalDao.update(goal);
+		return Response.ok(goal, MediaType.APPLICATION_XML).build();
 	}
 
 	@DELETE
@@ -123,16 +128,13 @@ public class GoalResource {
 	public Response deleteGoal(@PathParam("id") int personId,
 			@PathParam("measure") String measureName,
 			@PathParam("gid") int goalId) {
-		Person p = personDao.read(personId);
-		if (p == null) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
 		List<MeasureDefinition> list = measureDefinitionDao
 				.readByName(measureName);
 		if (list.isEmpty()) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
-		Goal g = goalDao.read(goalId);
+		Goal g = goalDao.readByConstraints(personId, list.get(0)
+				.getMeasureDefId(), goalId);
 		if (g == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
@@ -142,5 +144,23 @@ public class GoalResource {
 			return Response.ok().build();
 		} else
 			return Response.notModified().build();
+	}
+
+	private boolean isGoalValid(Goal g) {
+		String val = g.getValue();
+		if (val == null || val.isEmpty()) {
+			return false;
+		}
+		try {
+			Double.valueOf(val);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+
+		if (g.getExpDate() == null) {
+			return false;
+		}
+
+		return true;
 	}
 }

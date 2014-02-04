@@ -22,7 +22,7 @@ public class Utils {
 			try {
 				date = dataFormat.parse(dateString);
 			} catch (ParseException e) {
-				LOGGER.log(Level.WARNING, "Date parsing error", e);
+				LOGGER.log(Level.WARNING, "Date parsing error", e.getLocalizedMessage());
 			}
 		}
 		return date;
@@ -30,7 +30,7 @@ public class Utils {
 
 	public static String convertDateToString(Date date) {
 		DateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-		String res = dataFormat.format(date);		
+		String res = dataFormat.format(date);
 		return res;
 	}
 }

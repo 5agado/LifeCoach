@@ -1,37 +1,23 @@
-!!finest for logginh RESTClient
+!!remove logging for RESTClient and eclipseLink (reset for the presentation)
 
-!!use relative path for db
+!!use relative path for db and check chache
 
 !!suggest to register a measure if too much time passed or if no measure before goal
 (add to statistics)
 
 !!Expose a service for the HealthProfile in order to retrieve or upload a file resource
 
+!!add measuredef creation for HealthProfile (there is the possibility of no measure present)
 
-
-!!EclipseLink seems ok, no need for Hibernate or others
 
 !!Modulation, portability and Extensibility, evolvability, flexibility, interoperability
 (secondary) !!performance, modifiability, reliability, usability, security
-
-!!save exercises result (num of abs, push app etc)
 
 !!diet (What to eat), exercises (What to do), health (What/How are you)
 !!!three different and independent service modules
 ??should be some division about profile: old, bodybuilder, young, male, female etc.
 	or this id defined directly by the goals (??also some predefined set of "goals/boundaries")
 	
-!!The point here is to provide a flexibil system to define a/our personal profile type
-	First you can add measuredefinitions definind the correspondent profile type (e.g. lifestyle, health..)
-	the choiche is completely up to you.
-	Having this you can define a new application that make use of that profile.
-	EXAMPLE of Blood Exam!!
-!!Note that there is some problem with the unicity of the measure name, so I cannot have to different profiles
-with the same measuere definition EXAMPLE: emoglobina in blood, I cannot put emoglobina in health
-	??Solution, many to many between measure type and profile type
-	
-!!During presentation specify that the BloodProfile could be done completely generic,
-but in this case for the sake of demostration has been put in this specific way.
 	
 #ARCHITECTURE DESCRIPTION
 Module views show the structure of units of implementation; 
@@ -44,22 +30,12 @@ Data Model view shows the organization of entities in a database.
 	!!decided to keep only lifeprofile, and add profileType to measureDef (e.g. lifestyle, health..)
 		PRO: less tables, less duplicate and possible conflicts/controls CONTRO: not real division
 		??better impl of profile type, like another table?? !!in our case only two (and seems difficult to add new ones)
-!!goals derive from comparison on measurements values in a specific time-frame
 
-!!??measureName unique??
-
-#MODEL
-??Using Joda Time
 
 #ANNOTATIONS
 ??How to represent the measures: in some case is ok the minimal, but in other (like the profile) its better
 to have the measure name, but it doesn't look good to have all the measuredefinition object
 	??add a field and initialize it when needed
-
-#SERVICE
-!!exernalize things like motivation phrases, recipes, nutrition values and akin
-
-!!all rest on Person, Measure and MeasureDefinition. Consume and produce both JSON and XML
 
 #MODEL
 !!No sharing of models between services: BloodProfile should define its own Profile model, 
@@ -71,5 +47,7 @@ and extract the useful data from the XML response, or even define is new Measure
 ??Return alwat a Response for the REST methods, instead of the type (and NULL, that works as 204)
 ??Use and check the type (as defined in the DB) of the values of the various model (e.g. Measure.value)
 ??ON DELETER Cascade DATABASE
+??Using Joda Time
 TODO expose adapter as a service
 TODO check RESTCLient validity with JSON too
+!!update def putting an already present name gives error

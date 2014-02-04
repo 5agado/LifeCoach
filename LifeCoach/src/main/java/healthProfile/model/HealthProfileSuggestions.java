@@ -32,7 +32,7 @@ public class HealthProfileSuggestions implements Serializable {
 	int highW;
 
 	@XmlElement(name = "overall_illness_level")
-	int illnessLevel;
+	String illnessLevel;
 
 	@XmlElement(name = "advice")
 	List<String> advice;
@@ -80,11 +80,11 @@ public class HealthProfileSuggestions implements Serializable {
 		this.highW = highW;
 	}
 
-	public int getIllnessLevel() {
+	public String getIllnessLevel() {
 		return illnessLevel;
 	}
 
-	public void setIllnessLevel(int illnessLevel) {
+	public void setIllnessLevel(String illnessLevel) {
 		this.illnessLevel = illnessLevel;
 	}
 

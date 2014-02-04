@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><measures updated="true">
 	<measure>
-		<value>4.3</value>
+		<value>14.3</value>
 		<measureName>leucociti</measureName>
 	</measure>
 	<measure>
-		<value>5.33</value>
+		<value>5.11</value>
 		<measureName>eritrociti</measureName>
 	</measure>
 	<measure>
-		<value>15.2</value>
+		<value>18.7</value>
 		<measureName>emoglobina</measureName>
 	</measure>
 	<measure>
-		<value>46.6</value>
+		<value>146.9</value>
 		<measureName>ematocrito</measureName>
 	</measure>
 	<measure>
-		<value>190</value>
+		<value>10</value>
 		<measureName>piastrine</measureName>
 	</measure>
 	<measure>
-		<value>77</value>
+		<value>97.60</value>
 		<measureName>glicemia</measureName>
 	</measure>
 	<measure>
-		<value>40</value>
+		<value>400</value>
 		<measureName>trigliceridi</measureName>
 	</measure>
 	<measure>
-		<value>144</value>
+		<value>123</value>
 		<measureName>colesterolo</measureName>
 	</measure>
 </measures>

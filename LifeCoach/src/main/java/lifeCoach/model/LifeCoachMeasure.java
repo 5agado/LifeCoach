@@ -13,8 +13,7 @@ import model.Goal;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "measureName", "value", "goal",
-		"goalsStatusDescription" })
+@XmlType(propOrder = { "measureName", "value", "goal", "goalsStatusDescription" })
 public class LifeCoachMeasure implements Serializable {
 	private static final long serialVersionUID = 1L;
 

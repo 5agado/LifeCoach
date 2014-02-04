@@ -3,20 +3,16 @@ package businessLogic;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Random;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import lifeCoach.LifeCoachLogic;
 import model.Goal;
 import model.Measure;
 import model.dao.GoalDao;
 import model.dao.MeasureDao;
 
 import org.junit.Test;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -40,17 +36,18 @@ public class TestLifeCoachLogic {
 		// LifeCoachLogic.class.getDeclaredMethod("computeIntervalPercentage",
 		// Long.class, Long.class);
 		// method.setAccessible(true);
-		Calendar c = Calendar.getInstance();
-		c.set(2014, 1, 11);
-		Date d1 = c.getTime();
-		c.set(2014, 2, 1);
-		Date d2 = c.getTime();
-		c.set(2014, 2, 2);
-		Date d3 = c.getTime();
+		//		Calendar c = Calendar.getInstance();
+		//		c.set(2014, 1, 11);
+		//		Date d1 = c.getTime();
+		//		c.set(2014, 2, 1);
+		//		Date d2 = c.getTime();
+		//		c.set(2014, 2, 2);
+		//		Date d3 = c.getTime();
 
-		//System.out.println(LifeCoachLogic.computeIntervalPercentage(d1, d2, d3));
+		// System.out.println(LifeCoachLogic.computeIntervalPercentage(d1, d2,
+		// d3));
 	}
-	
+
 	@Test
 	public void testMotivational() {
 		Random r = new Random();
@@ -60,7 +57,7 @@ public class TestLifeCoachLogic {
 		} catch (IOException | SAXException | ParserConfigurationException e) {
 			System.out.println("No motivational");
 		}
-		NodeList nodeList  = parser.readNodeList("/phrases/phrase");
-		Node randomNode = nodeList.item(r.nextInt(nodeList.getLength()));
+		NodeList nodeList = parser.readNodeList("/phrases/phrase");
+		nodeList.item(r.nextInt(nodeList.getLength()));
 	}
 }

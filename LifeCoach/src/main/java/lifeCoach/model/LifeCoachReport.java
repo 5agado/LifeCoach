@@ -30,7 +30,7 @@ public class LifeCoachReport implements Serializable {
 	private LifeCoachReportStatistics statistics;
 
 	private String motivational;
-	
+
 	private String quote;
 
 	public LifeCoachReport() {
@@ -76,7 +76,7 @@ public class LifeCoachReport implements Serializable {
 	public void setMotivational(String motivational) {
 		this.motivational = motivational;
 	}
-	
+
 	public String getQuote() {
 		return quote;
 	}

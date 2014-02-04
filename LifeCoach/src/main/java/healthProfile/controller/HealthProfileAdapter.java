@@ -1,4 +1,4 @@
-package healthProfile;
+package healthProfile.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,8 +45,8 @@ public class HealthProfileAdapter {
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node currentNode = nodeList.item(i);
 			Measure measure = new Measure();
-			XMLMeasure xmlMeasure = Serializer.unmarshal(
-					XMLMeasure.class, currentNode);
+			XMLMeasure xmlMeasure = Serializer.unmarshal(XMLMeasure.class,
+					currentNode);
 			if (xmlMeasure == null) {
 				continue;
 			}
@@ -78,8 +78,7 @@ public class HealthProfileAdapter {
 		if (node == null) {
 			return "";
 		}
-		XMLAdvice advice = Serializer.unmarshal(XMLAdvice.class,
-				node);
+		XMLAdvice advice = Serializer.unmarshal(XMLAdvice.class, node);
 		return advice.getContent();
 	}
 

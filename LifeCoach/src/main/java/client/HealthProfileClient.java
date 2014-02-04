@@ -1,7 +1,7 @@
 package client;
 
-import healthProfile.HealthProfileServiceInterface;
 import healthProfile.model.HealthProfile;
+import healthProfile.ws.HealthProfileServiceInterface;
 
 import java.net.URL;
 

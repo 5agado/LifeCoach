@@ -1,4 +1,4 @@
-package healthProfile;
+package healthProfile.controller;
 
 import healthProfile.model.HealthMeasure;
 import healthProfile.model.HealthProfile;
@@ -22,19 +22,23 @@ import org.xml.sax.SAXException;
 import client.ResourcesClient;
 
 public class HealthProfileServiceHelper {
+	private final static String WARNING_ZERO = "";
 	private final static String WARNING_LOW = "*";
 	private final static String WARNING_MEDIUM = "**";
 	private final static String WARNING_HIGH = "***";
-	private final static int ILLNESS_WARNING_LOW = 1;
-	private final static int ILLNESS_WARNING_MEDIUM = 2;
-	private final static int ILLNESS_WARNING_HIGH = 4;
+	private final static String CONTACT_DOCTOR_MSG = "Si consiglia di rivolgersi al "
+			+ "proprio medico di famiglia al più presto";
+	private final static double ILLNESS_WARNING_LOW = 1.0;
+	private final static double ILLNESS_WARNING_MEDIUM = 2.0;
+	private final static double ILLNESS_WARNING_HIGH = 4.0;
 	private final static Logger LOGGER = Logger
 			.getLogger(HealthProfileServiceHelper.class.getName());
 
 	private ResourcesClient client = new ResourcesClient();
 	private HealthProfileAdapter adapter;
 
-	public HealthProfileServiceHelper() {}
+	public HealthProfileServiceHelper() {
+	}
 
 	public HealthProfile readPersonHealthProfile(int personId,
 			String profileType) {
@@ -55,7 +59,8 @@ public class HealthProfileServiceHelper {
 		try {
 			adapter = new HealthProfileAdapter(profileType, personId);
 		} catch (IOException e) {
-			LOGGER.log(Level.WARNING, "No such profile type or person ID", e);
+			LOGGER.log(Level.WARNING, "No such profile type or person ID",
+					e.getLocalizedMessage());
 			return profile;
 		} catch (SAXException e) {
 			LOGGER.log(Level.WARNING, "SAXException", e);
@@ -69,8 +74,8 @@ public class HealthProfileServiceHelper {
 			updateRemoteMeasures(personId);
 		}
 
-		List<Measure> remoteMeasures = client
-				.readProfileMeasures(personId, profileType);
+		List<Measure> remoteMeasures = client.readProfileMeasures(personId,
+				profileType);
 
 		if (remoteMeasures == null || remoteMeasures.isEmpty()) {
 			return profile;
@@ -160,7 +165,7 @@ public class HealthProfileServiceHelper {
 		List<String> advice = new ArrayList<String>();
 
 		int numWL = 0, numWM = 0, numWH = 0;
-		int profileIllness = 0;
+		double profileIllness = 0.0;
 		int numMeasures = 0;
 		List<HealthMeasure> measures = profile.getMeasures();
 		for (HealthMeasure m : measures) {
@@ -170,6 +175,8 @@ public class HealthProfileServiceHelper {
 			}
 			numMeasures++;
 			switch (wLevel) {
+			case WARNING_ZERO:
+				break;
 			case WARNING_LOW:
 				profileIllness += ILLNESS_WARNING_LOW;
 				advice.add(adapter.readAdviceFor(m.getMeasureName()));
@@ -191,13 +198,19 @@ public class HealthProfileServiceHelper {
 			}
 		}
 
-		profileIllness = profileIllness / numMeasures;
+		profileIllness = (profileIllness / (numMeasures * ILLNESS_WARNING_HIGH)) * 100.0;
 		suggestions.setNumMeasures(measures.size());
 		suggestions.setNumDetailedMeasures(numMeasures);
 		suggestions.setLowW(numWL);
 		suggestions.setMediumW(numWM);
 		suggestions.setHighW(numWH);
-		suggestions.setIllnessLevel(profileIllness);
+		suggestions
+				.setIllnessLevel(String.format("%.2f", profileIllness) + "%");
+
+		if (profileIllness > 80.0) {
+			advice.add(CONTACT_DOCTOR_MSG);
+		}
+
 		suggestions.setAdvice(advice);
 		return suggestions;
 	}

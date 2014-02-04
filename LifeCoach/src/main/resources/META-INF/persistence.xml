@@ -11,12 +11,13 @@
 		<class>model.Goal</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.sqlite.JDBC" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:sqlite:C:\Users\Alex\git\edu.sagado.SDE.LifeCoach\LifeCoach\src\main\resources\database.db" />
-			<property name="eclipselink.logging.level" value="FINE" />
-			<property name="eclipselink.query-results-cache" value="false" />
-			<property name="eclipselink.cache.shared.default" value="false" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:sqlite:src/main/resources/database.db" />
+			<property name="eclipselink.logging.level" value="WARNING" />
 			<property name="eclipselink.ddl-generation" value="create-tables"/> 
-			<property name="eclipselink.ddl-generation.output-mode" value="both" />
+			<!-- <property name="eclipselink.query-results-cache" value="false" />
+			<property name="eclipselink.cache.shared.default" value="false" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:sqlite:C:\Users\Alex\git\edu.sagado.SDE.LifeCoach\LifeCoach\src\main\resources\database.db" />
+			<property name="eclipselink.ddl-generation.output-mode" value="both" /> -->
 		</properties>
 	</persistence-unit>
 </persistence>

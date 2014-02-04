@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 
 import model.Measure;
 
@@ -21,6 +22,21 @@ public class MeasureDao extends DaoJpaImpl<Measure, Integer> {
 				Measure.class).getResultList();
 		closeConnections(entityManager);
 		return list;
+	}
+
+	public Measure readByCostraints(int personId, int measureDefinitionId,
+			int measureId) {
+		EntityManager entityManager = createEntityManager();
+		List<Measure> list = entityManager
+				.createNamedQuery("Measure.findByPersonDefinitionAndId",
+						Measure.class).setParameter("pId", personId)
+				.setParameter("mDefId", measureDefinitionId)
+				.setParameter("mId", measureId).getResultList();
+		closeConnections(entityManager);
+		if (list.isEmpty()) {
+			return null;
+		}
+		return list.get(0);
 	}
 
 	public List<Measure> readAllByPerson(int personId) {
@@ -45,6 +61,10 @@ public class MeasureDao extends DaoJpaImpl<Measure, Integer> {
 
 	public List<Measure> readAllByPersonDefinitionAndDate(int personId,
 			int measureDefinitionId, Date beforeDate, Date afterDate) {
+		if (beforeDate == null && afterDate == null){
+			return readAllByPersonAndDefinition(personId, measureDefinitionId);
+		}
+		
 		EntityManager entityManager = createEntityManager();
 		String query;
 		List<Measure> list = new ArrayList<Measure>();
@@ -56,8 +76,7 @@ public class MeasureDao extends DaoJpaImpl<Measure, Integer> {
 			list = entityManager.createQuery(query, Measure.class)
 					.setParameter("pId", personId)
 					.setParameter("mDefId", measureDefinitionId)
-					.setParameter("aDate", afterDate)
-					.getResultList();
+					.setParameter("aDate", afterDate).getResultList();
 		} else if (afterDate == null) {
 			query = "SELECT m FROM Measure m WHERE m.person.personId = :pId "
 					+ "AND m.measureDefinition.measureDefId = :mDefId "
@@ -66,8 +85,7 @@ public class MeasureDao extends DaoJpaImpl<Measure, Integer> {
 			list = entityManager.createQuery(query, Measure.class)
 					.setParameter("pId", personId)
 					.setParameter("mDefId", measureDefinitionId)
-					.setParameter("bDate", beforeDate)
-					.getResultList();
+					.setParameter("bDate", beforeDate).getResultList();
 		} else {
 			query = "SELECT m FROM Measure m WHERE m.person.personId = :pId "
 					+ "AND m.measureDefinition.measureDefId = :mDefId "
@@ -77,8 +95,7 @@ public class MeasureDao extends DaoJpaImpl<Measure, Integer> {
 					.setParameter("pId", personId)
 					.setParameter("mDefId", measureDefinitionId)
 					.setParameter("bDate", beforeDate)
-					.setParameter("aDate", afterDate)
-					.getResultList();
+					.setParameter("aDate", afterDate).getResultList();
 		}
 		closeConnections(entityManager);
 		return list;
@@ -87,7 +104,7 @@ public class MeasureDao extends DaoJpaImpl<Measure, Integer> {
 	public List<Measure> readPersonProfile(int personId, String profileType) {
 		EntityManager entityManager = createEntityManager();
 		List<Measure> list = new ArrayList<Measure>();
-		if (profileType.isEmpty()){
+		if (profileType.isEmpty()) {
 			String query = "SELECT m "
 					+ "FROM Measure m "
 					+ "WHERE m.person.personId = :pId AND m.measureDefinition.measureDefId IN ("
@@ -96,8 +113,7 @@ public class MeasureDao extends DaoJpaImpl<Measure, Integer> {
 					+ "ORDER BY m.timestamp DESC ";
 			list = entityManager.createQuery(query, Measure.class)
 					.setParameter("pId", personId).getResultList();
-		}
-		else {
+		} else {
 			String query = "SELECT m "
 					+ "FROM Measure m "
 					+ "WHERE m.person.personId = :pId AND m.measureDefinition.measureDefId IN ("
@@ -111,5 +127,27 @@ public class MeasureDao extends DaoJpaImpl<Measure, Integer> {
 		}
 		closeConnections(entityManager);
 		return list;
+	}
+
+	public void deletePersonProfile(int personId, String profileType) {
+		EntityManager entityManager = createEntityManager();
+		EntityTransaction tx = entityManager.getTransaction();
+		tx.begin();
+		if (profileType.isEmpty()) {
+			String query = "DELETE " + "FROM Measure m "
+					+ "WHERE m.person.personId = :pId";
+			entityManager.createQuery(query).setParameter("pId", personId)
+					.executeUpdate();
+		} else {
+			String query = "DELETE "
+					+ "FROM Measure m "
+					+ "WHERE m.person.personId = :pId AND m.measureDefinition.measureDefId IN ("
+					+ "SELECT mf.measureDefId " + "FROM MeasureDefinition mf "
+					+ "WHERE mf.profileType = :profileType " + ") ";
+			entityManager.createQuery(query).setParameter("pId", personId)
+					.setParameter("profileType", profileType).executeUpdate();
+		}
+		tx.commit();
+		closeConnections(entityManager);
 	}
 }

@@ -4,60 +4,62 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.sun.jersey.api.client.ClientRequest;
+import client.RESTClient;
+
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
-import util.Serializer;
-import client.RESTClient;
-
 public class TestRESTClient {
-	private final static Logger LOGGER = Logger
-			.getLogger(TestRESTClient.class.getName());
-	private static final String SERVICE_URL = "http://localhost:8080/SDE_Final_Project/rest/"; 
-			//"http://localhost:5030/";
+	private final static Logger LOGGER = Logger.getLogger(TestRESTClient.class
+			.getName());
+	private static final String SERVICE_URL = "http://localhost:5030/";
+	// http://localhost:8080/SDE_Final_Project/rest/
 	private static Scanner scan;
-	
+
 	public static void main(String[] args) {
 		RESTClient client = new RESTClient(SERVICE_URL);
-		
-		LOGGER.log(Level.INFO, "Starting REST services testing via RESTClient\n"
-				+ "\n [kill the process to exit]");
-		
+
+		LOGGER.log(Level.INFO,
+				"Starting REST services testing via RESTClient\n"
+						+ "\n [kill the process to exit]");
+
 		scan = new Scanner(System.in);
-		while (true){
+		while (true) {
 			String method;
 			boolean validMethod = false;
-			
+
 			do {
-				System.out.println("Insert method type: ");
+				System.out.print("Insert method type: ");
 				method = scan.nextLine().trim();
-				if (method.equals("POST") || method.equals("PUT") || 
-						method.equals("GET") || method.equals("DELETE")){
+				if (method.equals("POST") || method.equals("PUT")
+						|| method.equals("GET") || method.equals("DELETE")) {
 					validMethod = true;
 				}
 			} while (!validMethod);
-			
-			System.out.println("\nInsert endpoint: ");
-		    String endpoint = scan.nextLine();
-		    ClientResponse response = null;
-		    String entity = "";
+
+			System.out.print("\nInsert endpoint: ");
+			String endpoint = scan.nextLine();
+			ClientResponse response = null;
+			String entity = "";
 			String nextLine = "";
-		    
+
 			switch (method) {
 			case "GET":
-				response = client.executeGET(endpoint, new MultivaluedMapImpl());
+				response = client
+						.executeGET(endpoint, new MultivaluedMapImpl());
 				break;
 			case "POST":
-				System.out.println("\nInsert body entity followed by the <DONE> keyword: ");
-				while (!(nextLine = scan.nextLine()).trim().equals("DONE")){
+				System.out
+						.println("\nInsert body entity followed by the <DONE> keyword: ");
+				while (!(nextLine = scan.nextLine()).trim().equals("DONE")) {
 					entity = entity + nextLine;
 				}
 				response = client.executePOST(endpoint, entity);
 				break;
 			case "PUT":
-				System.out.println("\nInsert body entity followed by the <DONE> keyword: ");
-				while (!(nextLine = scan.nextLine()).trim().equals("DONE")){
+				System.out
+						.println("\nInsert body entity followed by the <DONE> keyword: ");
+				while (!(nextLine = scan.nextLine()).trim().equals("DONE")) {
 					entity = entity + nextLine;
 				}
 				response = client.executePUT(endpoint, entity);
@@ -69,16 +71,15 @@ public class TestRESTClient {
 				LOGGER.log(Level.SEVERE, "Invalid method");
 				break;
 			}
-		    
+
 			System.out.println("\nRESPONSE:");
 			if (response.getStatus() != 200) {
 				System.out.println("Http error code = " + response.getStatus());
-			}
-			else {
+			} else {
 				System.out.println("Http status = 200");
 				System.out.println(response.getEntity(String.class));
 			}
-			
+
 			System.out.println("\n");
 		}
 	}

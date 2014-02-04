@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlType;
 @NamedQueries({
 		@NamedQuery(name = "Goal.findAll", query = "SELECT g FROM Goal g"),
 		@NamedQuery(name = "Goal.findByPerson", query = "SELECT g FROM Goal g WHERE g.person.personId = :pId"),
+		@NamedQuery(name = "Goal.findByPersonDefinitionAndId", query = "SELECT g FROM Goal g WHERE g.person.personId = :pId "
+				+ "AND g.goalId = :gId AND g.measureDefinition.measureDefId = :mDefId"),
 		@NamedQuery(name = "Goal.findByPersonAndDefinition", query = "SELECT g FROM Goal g WHERE g.person.personId = :pId "
 				+ "AND g.measureDefinition.measureDefId = :mDefId"), })
 public class Goal implements Serializable {

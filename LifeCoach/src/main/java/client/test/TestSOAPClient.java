@@ -1,6 +1,5 @@
 package client.test;
 
-import healthProfile.HealthProfileServicePublisher;
 import healthProfile.model.HealthProfile;
 
 import java.net.MalformedURLException;
@@ -14,10 +13,10 @@ import util.Serializer;
 import client.HealthProfileClient;
 
 public class TestSOAPClient {
-	private final static Logger LOGGER = Logger
-			.getLogger(TestSOAPClient.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(TestSOAPClient.class
+			.getName());
 	private static final String SERVICE_URL = "http://localhost:5031/ws/healthProfile?wsdl";
-	private static final String SERVICE_URI = "http://healthProfile/";
+	private static final String SERVICE_URI = "http://ws.healthProfile/";
 	private static final String SERVICE_NAME = "HealthProfileService";
 	private static Scanner scan;
 
@@ -31,17 +30,18 @@ public class TestSOAPClient {
 			LOGGER.log(Level.SEVERE, "Malformed URL", e);
 			System.exit(1);
 		}
-		
-		LOGGER.log(Level.INFO, "Starting HealthProfile Service testing via HealthProfileClient\n"
-				+ "\n [kill the process to exit]");
-		
+
+		LOGGER.log(Level.INFO,
+				"Starting HealthProfile Service testing via HealthProfileClient\n"
+						+ "\n [kill the process to exit]");
+
 		scan = new Scanner(System.in);
-		while (true){
-			System.out.println("Testing readPersonHealthProfile");
+		while (true) {
+			System.out.println("\nTesting readPersonHealthProfile");
 			int personId = -1;
-			
+
 			do {
-				System.out.println("Insert personId: ");
+				System.out.print("Insert personId: ");
 				String id = scan.nextLine();
 				try {
 					personId = Integer.valueOf(id);
@@ -49,12 +49,16 @@ public class TestSOAPClient {
 					personId = -1;
 				}
 			} while (personId == -1);
-		    
-		    System.out.println("Insert profileType: ");
-		    String profileType = scan.nextLine();
-		    
-		    String response = Serializer.marshalAsString(client.readPersonHealthProfile(personId, profileType));
-		    System.out.println(response);
+
+			System.out.print("Insert profileType: ");
+			String profileType = scan.nextLine();
+
+			System.out.println("\nRESPONSE: ");
+			HealthProfile hp = client.readPersonHealthProfile(personId,
+					profileType);
+			String response = hp == null ? "No profile found" : Serializer
+					.marshalAsString(hp);
+			System.out.println(response);
 		}
 	}
 }

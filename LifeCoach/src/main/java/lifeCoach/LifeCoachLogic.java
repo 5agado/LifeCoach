@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -19,7 +20,7 @@ import model.Goal;
 import model.Measure;
 import client.ResourcesClient;
 
-@Path("/lifeCoachLogic/")
+@Path("/lifeCoachLogic/person/{id}/")
 public class LifeCoachLogic {
 	private ResourcesClient client = new ResourcesClient();
 	private final static Logger LOGGER = Logger.getLogger(LifeCoachLogic.class
@@ -35,8 +36,8 @@ public class LifeCoachLogic {
 	@Path("measures")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<LifeCoachMeasure> computeAndGetLifeCoachMeasures(
-			@QueryParam("personId") int personId,
-			@QueryParam("profileType") String profileType,
+			@PathParam("id") int personId,
+			@DefaultValue("") @QueryParam("profileType") String profileType,
 			@QueryParam("goalStatusFilter") String goalStatusFilter) {
 		if (personId == 0) {
 			return null;
@@ -61,24 +62,27 @@ public class LifeCoachLogic {
 				List<Measure> measuresBeforeGoal = client.readMeasuresByDate(
 						personId, m.getMeasureDefinition().getMeasureName(),
 						g.getExpDate(), null);
-				if (measuresBeforeGoal == null || measuresBeforeGoal.isEmpty()){
-					LOGGER.log(Level.FINE, "No recent measured for goal " + g.getGoalId());
+				if (measuresBeforeGoal == null || measuresBeforeGoal.isEmpty()) {
+					LOGGER.log(Level.FINE,
+							"No recent measures for goal " + g.getGoalId());
 					continue;
 				}
 				Measure goalMostRecentMeasure = measuresBeforeGoal.get(0);
-				String goalState = computeAndGetGoalCurrentState(g, goalMostRecentMeasure);
-				
-				//if the case, filter by goal state
-				if (goalStatusFilter!= null && !goalStatusFilter.isEmpty()){
+				String goalState = computeAndGetGoalCurrentState(g,
+						goalMostRecentMeasure);
+
+				// if the case, filter by goal state
+				if (goalStatusFilter != null && !goalStatusFilter.isEmpty()) {
 					String[] stateParts = goalState.split("-");
 					String status = stateParts[0].trim();
-					if (!status.equalsIgnoreCase(goalStatusFilter)){
+					if (!status.equalsIgnoreCase(goalStatusFilter)) {
 						continue;
 					}
-				}				
-				
+				}
+
 				LifeCoachMeasure lifeM = new LifeCoachMeasure();
-				lifeM.setMeasureName(goalMostRecentMeasure.getMeasureDefinition().getMeasureName());
+				lifeM.setMeasureName(goalMostRecentMeasure
+						.getMeasureDefinition().getMeasureName());
 				lifeM.setValue(goalMostRecentMeasure.getValue());
 				goalsStatusDescription.add(goalState);
 				lifeM.setGoal(g);
@@ -94,7 +98,7 @@ public class LifeCoachLogic {
 	@Path("statistics")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public LifeCoachReportStatistics computeAndGetReportOverallStatistics(
-			@QueryParam("personId") int personId,
+			@PathParam("id") int personId,
 			@QueryParam("profileType") String profileType) {
 		List<LifeCoachMeasure> measures = computeAndGetLifeCoachMeasures(
 				personId, profileType, null);
@@ -137,10 +141,11 @@ public class LifeCoachLogic {
 	@GET
 	@Path("goalState")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public String getGoalCurrentState(int personId, int goalId,
-			String measureName) {
+	public String getGoalCurrentState(@PathParam("id") int personId,
+			@QueryParam("goalId") int goalId,
+			@DefaultValue("") @QueryParam("measureName") String measureName) {
 		Goal goal = client.readGoal(personId, measureName, goalId);
-		if (goal == null) {
+		if (goal == null || measureName.isEmpty()) {
 			return "";
 		}
 		List<Measure> measures = client.readMeasuresByDate(personId,

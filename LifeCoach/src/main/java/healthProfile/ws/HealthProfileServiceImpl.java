@@ -1,10 +1,11 @@
-package healthProfile;
+package healthProfile.ws;
 
+import healthProfile.controller.HealthProfileServiceHelper;
 import healthProfile.model.HealthProfile;
 
 import javax.jws.WebService;
 
-@WebService(endpointInterface = "healthProfile.HealthProfileServiceInterface", serviceName = "HealthProfileService")
+@WebService(endpointInterface = "healthProfile.ws.HealthProfileServiceInterface", serviceName = "HealthProfileService")
 public class HealthProfileServiceImpl implements HealthProfileServiceInterface {
 	HealthProfileServiceHelper helper;
 
@@ -17,6 +18,9 @@ public class HealthProfileServiceImpl implements HealthProfileServiceInterface {
 			String profileType) {
 		HealthProfile profile = helper.readPersonHealthProfile(personId,
 				profileType);
+		if (profile == null) {
+			return new HealthProfile();
+		}
 		return profile;
 	}
 }

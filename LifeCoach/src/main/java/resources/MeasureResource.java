@@ -1,7 +1,5 @@
 package resources;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -19,13 +17,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import util.Utils;
 import model.Measure;
 import model.MeasureDefinition;
 import model.Person;
 import model.dao.MeasureDao;
 import model.dao.MeasureDefinitionDao;
 import model.dao.PersonDao;
+import util.Utils;
 
 @Path("/person/{id}/{measure}/")
 public class MeasureResource {
@@ -50,8 +48,8 @@ public class MeasureResource {
 			return null;
 		}
 		if (!before.isEmpty() || !after.isEmpty()) {
-	        Date beforeDate = Utils.convertDateFrom(before);
-	        Date afterDate = Utils.convertDateFrom(after);
+			Date beforeDate = Utils.convertDateFrom(before);
+			Date afterDate = Utils.convertDateFrom(after);
 			return measureDao.readAllByPersonDefinitionAndDate(personId, list
 					.get(0).getMeasureDefId(), beforeDate, afterDate);
 		}
@@ -73,10 +71,13 @@ public class MeasureResource {
 		if (list.isEmpty()) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
+		if (!isMeasureValueValid(measure)) {
+			return Response.notAcceptable(null).build();
+		}
 		measure.setMeasureDefinition(list.get(0));
 		measure.setPerson(p);
 		measure.setMeasureId(0);
-		if (measure.getTimestamp() == null){
+		if (measure.getTimestamp() == null) {
 			measure.setTimestamp(new Date());
 		}
 		measure = measureDao.create(measure);
@@ -92,42 +93,44 @@ public class MeasureResource {
 	public Measure readMeasure(@PathParam("id") int personId,
 			@PathParam("measure") String measureName,
 			@PathParam("mid") int measureId) {
-		Person p = personDao.read(personId);
-		if (p == null) {
-			return null;
-		}
 		List<MeasureDefinition> list = measureDefinitionDao
 				.readByName(measureName);
 		if (list.isEmpty()) {
 			return null;
 		}
-		Measure m = measureDao.read(measureId);
+		Measure m = measureDao.readByCostraints(personId, list.get(0)
+				.getMeasureDefId(), measureId);
 		return m;
 	}
 
 	@PUT
 	@Path("{mid}")
-	@Consumes
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updateMeasure(Measure measure,
 			@PathParam("id") int personId,
 			@PathParam("measure") String measureName,
 			@PathParam("mid") int measureId) {
-		Person p = personDao.read(personId);
-		if (p == null) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
 		List<MeasureDefinition> list = measureDefinitionDao
 				.readByName(measureName);
 		if (list.isEmpty()) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
-		Measure m = measureDao.read(measureId);
+		Measure m = measureDao.readByCostraints(personId, list.get(0)
+				.getMeasureDefId(), measureId);
 		if (m == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
+		Person p = personDao.read(personId);
+		if (p == null) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+		if (!isMeasureValueValid(measure)) {
+			return Response.notAcceptable(null).build();
+		}
 		measure.setMeasureId(measureId);
-		if (measure.getTimestamp() == null){
+		measure.setPerson(p);
+		measure.setMeasureDefinition(list.get(0));
+		if (measure.getTimestamp() == null) {
 			measure.setTimestamp(new Date());
 		}
 		measureDao.update(measure);
@@ -139,16 +142,13 @@ public class MeasureResource {
 	public Response deleteMeasure(@PathParam("id") int personId,
 			@PathParam("measure") String measureName,
 			@PathParam("mid") int measureId) {
-		Person p = personDao.read(personId);
-		if (p == null) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
 		List<MeasureDefinition> list = measureDefinitionDao
 				.readByName(measureName);
 		if (list.isEmpty()) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
-		Measure m = measureDao.read(measureId);
+		Measure m = measureDao.readByCostraints(personId, list.get(0)
+				.getMeasureDefId(), measureId);
 		if (m == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
@@ -158,5 +158,18 @@ public class MeasureResource {
 			return Response.ok().build();
 		} else
 			return Response.notModified().build();
+	}
+
+	private boolean isMeasureValueValid(Measure m) {
+		String val = m.getValue();
+		if (val == null || val.isEmpty()) {
+			return false;
+		}
+		try {
+			Double.valueOf(val);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+		return true;
 	}
 }

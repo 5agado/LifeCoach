@@ -69,18 +69,18 @@ public class TestDao {
 
 	@Test
 	public void createMeasure() {
-		Person p = PersonDao.getInstance().read(11);
+		Person p = PersonDao.getInstance().read(1);
 		assertNotNull("The person is not here", p);
 		List<MeasureDefinition> def = MeasureDefinitionDao.getInstance()
-				.readByName("weight");
+				.readByName("pushPress");
 		assertNotSame("The measureDef is not here", 0, def.size());
 		Measure m = new Measure();
 		m.setMeasureDefinition(def.get(0));
 		m.setPerson(p);
 		Calendar c = Calendar.getInstance();
-		c.set(2013, 12, 20);
+		c.set(2009, 11, 16);
 		m.setTimestamp(c.getTime());
-		int value = 79;
+		int value = 160;
 		m.setValue(String.valueOf(value));
 		MeasureDao.getInstance().create(m);
 	}
@@ -88,23 +88,24 @@ public class TestDao {
 	@Test
 	public void createGoal() {
 		// Random r = new Random();
-		Person p = PersonDao.getInstance().read(11);
+		Person p = PersonDao.getInstance().read(1);
 		assertNotNull("The person is not here", p);
 		List<MeasureDefinition> def = MeasureDefinitionDao.getInstance()
-				.readByName("calories");
+				.readByName("weight");
 		assertNotSame("The measureDef is not here", 0, def.size());
 		Goal g = new Goal();
 		g.setMeasureDefinition(def.get(0));
 		g.setPerson(p);
 		g.setComparator("LT");
 		g.setDescription(def.get(0).getMeasureName());
-		g.setTimestamp(new Date());
-		g.setValue("3000");
 		Calendar c = Calendar.getInstance();
+		c.set(2010, 1, 20);
+		g.setTimestamp(c.getTime());
+		g.setValue("65");
 		// int year = r.nextInt(10) + 2010;
 		// int month = r.nextInt(12) + 1;
 		// int day = r.nextInt(28) + 1;
-		c.set(2013, 4, 20);
+		c.set(2015, 4, 20);
 		g.setExpDate(c.getTime());
 		GoalDao.getInstance().create(g);
 	}
@@ -122,10 +123,11 @@ public class TestDao {
 		Date beforeDate = c.getTime();
 		c.set(2014, 3, 20);
 		Date afterDate = c.getTime();
-		List<Measure> measures = MeasureDao.getInstance().readAllByPersonDefinitionAndDate(
-				p.getPersonId(), profileMeasureDef.get(0).getMeasureDefId(),
-				beforeDate, afterDate);
-		for (Measure m : measures){
+		List<Measure> measures = MeasureDao.getInstance()
+				.readAllByPersonDefinitionAndDate(p.getPersonId(),
+						profileMeasureDef.get(0).getMeasureDefId(), beforeDate,
+						afterDate);
+		for (Measure m : measures) {
 			marshalToStdOut(Measure.class, m);
 		}
 	}
@@ -152,7 +154,7 @@ public class TestDao {
 	@Test
 	public void createProfileGoals() {
 		Random r = new Random();
-		Person p = PersonDao.getInstance().read(11);
+		Person p = PersonDao.getInstance().read(2);
 		assertNotNull("The person is not here", p);
 		List<MeasureDefinition> profileMeasureDef = MeasureDefinitionDao
 				.getInstance().readByProfileType("crossfit");
@@ -163,9 +165,10 @@ public class TestDao {
 			g.setPerson(p);
 			g.setComparator("GT");
 			g.setDescription(def.getMeasureName());
-			g.setTimestamp(new Date());
-			g.setValue(String.valueOf(r.nextInt(100) + 50));
 			Calendar c = Calendar.getInstance();
+			c.set(2011, 1, 12);
+			g.setTimestamp(c.getTime());
+			g.setValue(String.valueOf(r.nextInt(50) + 50));
 			int year = r.nextInt(10) + 2010;
 			int month = r.nextInt(12) + 1;
 			int day = r.nextInt(28) + 1;
@@ -195,7 +198,7 @@ public class TestDao {
 				String second = parts[1].substring(1, parts[1].length() - 1);
 				String mail = parts[parts.length - 2].substring(1,
 						parts[parts.length - 2].length() - 1);
-				
+
 				Person person = new Person();
 				person.setFirstname(first);
 				person.setLastname(second);
@@ -214,6 +217,76 @@ public class TestDao {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Test
+	public void readGoalsByPerson() {
+		Person p = PersonDao.getInstance().read(1);
+		assertNotNull("The person is not here", p);
+
+		List<Goal> goals = GoalDao.getInstance().readAllByPerson(1);
+
+		System.out.println(goals.size());
+		for (Goal g : goals) {
+			marshalToStdOut(Goal.class, g);
+		}
+	}
+
+	@Test
+	public void readGoalsByProfile() {
+		Person p = PersonDao.getInstance().read(1);
+		assertNotNull("The person is not here", p);
+
+		List<Goal> goals = GoalDao.getInstance().readPersonProfileGoals(1,
+				"crossfit");
+
+		System.out.println(goals.size());
+		for (Goal g : goals) {
+			marshalToStdOut(Goal.class, g);
+		}
+	}
+
+	@Test
+	public void deleteGoalsByProfile() {
+		Person p = PersonDao.getInstance().read(1);
+		assertNotNull("The person is not here", p);
+
+		GoalDao.getInstance().deletePersonProfileGoals(1, "");
+	}
+
+	@Test
+	public void readMeasuresByPerson() {
+		Person p = PersonDao.getInstance().read(1);
+		assertNotNull("The person is not here", p);
+
+		List<Measure> measures = MeasureDao.getInstance().readAllByPerson(1);
+
+		System.out.println(measures.size());
+		for (Measure m : measures) {
+			marshalToStdOut(Measure.class, m);
+		}
+	}
+
+	@Test
+	public void readMeasuresByProfile() {
+		Person p = PersonDao.getInstance().read(1);
+		assertNotNull("The person is not here", p);
+
+		List<Measure> measures = MeasureDao.getInstance().readPersonProfile(1,
+				"crossfit");
+
+		System.out.println(measures.size());
+		for (Measure m : measures) {
+			marshalToStdOut(Measure.class, m);
+		}
+	}
+
+	@Test
+	public void deleteMeasuresByProfile() {
+		Person p = PersonDao.getInstance().read(1);
+		assertNotNull("The person is not here", p);
+
+		MeasureDao.getInstance().deletePersonProfile(1, "");
 	}
 
 	public static void marshalToStdOut(Class<?> objClass, Object obj) {

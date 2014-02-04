@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.XmlType;
 @NamedQueries({
 		@NamedQuery(name = "Measure.findAll", query = "SELECT m FROM Measure m"),
 		@NamedQuery(name = "Measure.findByPerson", query = "SELECT m FROM Measure m WHERE m.person.personId = :pId"),
+		@NamedQuery(name = "Measure.findByPersonDefinitionAndId", query = "SELECT m FROM Measure m WHERE m.person.personId = :pId "
+				+ "AND m.measureId = :mId AND m.measureDefinition.measureDefId = :mDefId"),
 		@NamedQuery(name = "Measure.findByPersonAndDefinition", query = "SELECT m FROM Measure m WHERE m.person.personId = :pId "
 				+ "AND m.measureDefinition.measureDefId = :mDefId"), })
 public class Measure implements Serializable {
