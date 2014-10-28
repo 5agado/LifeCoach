@@ -1,25 +1,19 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.iit.bme.hu/soi/tvseries"
+    elementFormDefault="qualified"
+    xmlns:tns="http://www.iit.bme.hu/soi/tvseries"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:element name="goal" type="goal"/>
-
-  <xs:element name="healthMeasure" type="healthMeasure"/>
-
-  <xs:element name="healthProfile" type="healthProfile"/>
-
-  <xs:element name="healthProfileSuggestions" type="healthProfileSuggestions"/>
-
-  <xs:element name="lifeCoachMeasure" type="lifeCoachMeasure"/>
-
-  <xs:element name="lifeCoachReport" type="lifeCoachReport"/>
-
-  <xs:element name="lifeCoachReportStatistics" type="lifeCoachReportStatistics"/>
-
-  <xs:element name="measure" type="measure"/>
-
-  <xs:element name="measureDefinition" type="measureDefinition"/>
-
-  <xs:element name="person" type="person"/>
+  <xs:element name="goal" type="tns:goal"/>
+  <xs:element name="healthMeasure" type="tns:healthMeasure"/>
+  <xs:element name="healthProfile" type="tns:healthProfile"/>
+  <xs:element name="healthProfileSuggestions" type="tns:healthProfileSuggestions"/>
+  <xs:element name="lifeCoachMeasure" type="tns:lifeCoachMeasure"/>
+  <xs:element name="lifeCoachReport" type="tns:lifeCoachReport"/>
+  <xs:element name="lifeCoachReportStatistics" type="tns:lifeCoachReportStatistics"/>
+  <xs:element name="measure" type="tns:measure"/>
+  <xs:element name="measureDefinition" type="tns:measureDefinition"/>
+  <xs:element name="person" type="tns:person"/>
 
   <xs:complexType name="goal">
     <xs:sequence>
@@ -37,7 +31,7 @@
       <xs:element name="measureId" type="xs:int"/>
       <xs:element name="value" type="xs:string" minOccurs="0"/>
       <xs:element name="timestamp" type="xs:dateTime" minOccurs="0"/>
-      <xs:element ref="measureDefinition" minOccurs="0"/>
+      <xs:element ref="tns:measureDefinition" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -68,9 +62,9 @@
   <xs:complexType name="healthProfile">
     <xs:sequence>
       <xs:element name="date" type="xs:dateTime" minOccurs="0"/>
-      <xs:element ref="person" minOccurs="0"/>
-      <xs:element name="measure" type="healthMeasure" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="suggestions" type="healthProfileSuggestions" minOccurs="0"/>
+      <xs:element ref="tns:person" minOccurs="0"/>
+      <xs:element name="measure" type="tns:healthMeasure" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="suggestions" type="tns:healthProfileSuggestions" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -99,7 +93,7 @@
     <xs:sequence>
       <xs:element name="measureName" type="xs:string" minOccurs="0"/>
       <xs:element name="value" type="xs:string" minOccurs="0"/>
-      <xs:element ref="goal" minOccurs="0"/>
+      <xs:element ref="tns:goal" minOccurs="0"/>
       <xs:element name="goalStatus" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
@@ -107,9 +101,9 @@
   <xs:complexType name="lifeCoachReport">
     <xs:sequence>
       <xs:element name="date" type="xs:dateTime" minOccurs="0"/>
-      <xs:element ref="person" minOccurs="0"/>
-      <xs:element name="measure" type="lifeCoachMeasure" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="statistics" type="lifeCoachReportStatistics" minOccurs="0"/>
+      <xs:element ref="tns:person" minOccurs="0"/>
+      <xs:element name="measure" type="tns:lifeCoachMeasure" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="statistics" type="tns:lifeCoachReportStatistics" minOccurs="0"/>
       <xs:element name="motivational" type="xs:string" minOccurs="0"/>
       <xs:element name="quote" type="xs:string" minOccurs="0"/>
     </xs:sequence>
