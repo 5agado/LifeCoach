@@ -7,8 +7,7 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 
-@WebService
-@SOAPBinding(style = Style.RPC)
+@WebService(targetNamespace = "http://www.sagado.edu/soi/project")
 public interface HealthProfileServiceInterface {
 	@WebMethod(operationName = "readPersonHealthProfile")
 	public HealthProfile readPersonHealthProfile(int personId,

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema targetNamespace="http://www.iit.bme.hu/soi/tvseries"
+<xs:schema targetNamespace="http://www.sagado.edu/soi/project"
     elementFormDefault="qualified"
-    xmlns:tns="http://www.iit.bme.hu/soi/tvseries"
+    xmlns:tns="http://www.sagado.edu/soi/project"
     xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:element name="goal" type="tns:goal"/>

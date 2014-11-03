@@ -5,7 +5,9 @@ import healthProfile.model.HealthProfile;
 
 import javax.jws.WebService;
 
-@WebService(endpointInterface = "healthProfile.ws.HealthProfileServiceInterface", serviceName = "HealthProfileService")
+@WebService(targetNamespace = "http://www.sagado.edu/soi/project",
+		endpointInterface = "healthProfile.ws.HealthProfileServiceInterface", 
+		serviceName = "HealthProfileService")
 public class HealthProfileServiceImpl implements HealthProfileServiceInterface {
 	HealthProfileServiceHelper helper;
 
