@@ -1,3 +1,11 @@
+#NEW NOTES
+!!Try simple bpel integration
+
+
+!!use of FormParam for POST parameters (as for now they don't use anything)
+
+
+
 !!remove logging for RESTClient and eclipseLink (reset for the presentation)
 
 !!use relative path for db and check chache

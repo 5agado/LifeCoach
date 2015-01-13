@@ -16,7 +16,7 @@ public class TestSOAPClient {
 	private final static Logger LOGGER = Logger.getLogger(TestSOAPClient.class
 			.getName());
 	private static final String SERVICE_URL = "http://localhost:5031/ws/healthProfile?wsdl";
-	private static final String SERVICE_URI = "http://ws.healthProfile/";
+	private static final String SERVICE_URI = "http://www.sagado.edu/soi/project";
 	private static final String SERVICE_NAME = "HealthProfileService";
 	private static Scanner scan;
 

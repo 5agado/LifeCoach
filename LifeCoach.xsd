@@ -14,6 +14,7 @@
   <xs:element name="measure" type="tns:measure"/>
   <xs:element name="measureDefinition" type="tns:measureDefinition"/>
   <xs:element name="person" type="tns:person"/>
+  <xs:element name="resourceResponse" type="tns:resourceResponse"/>
 
   <xs:complexType name="goal">
     <xs:sequence>
@@ -117,5 +118,36 @@
       <xs:element name="still_in_progress" type="xs:int"/>
     </xs:sequence>
   </xs:complexType>
+  
+  <xs:complexType name="resourceResponse">
+    <xs:sequence>
+      <xs:element name="status" type="tns:status" minOccurs="0"/>
+      <xs:element name="resourceId" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:simpleType name="status">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="OK"/>
+      <xs:enumeration value="CREATED"/>
+      <xs:enumeration value="ACCEPTED"/>
+      <xs:enumeration value="NO_CONTENT"/>
+      <xs:enumeration value="MOVED_PERMANENTLY"/>
+      <xs:enumeration value="SEE_OTHER"/>
+      <xs:enumeration value="NOT_MODIFIED"/>
+      <xs:enumeration value="TEMPORARY_REDIRECT"/>
+      <xs:enumeration value="BAD_REQUEST"/>
+      <xs:enumeration value="UNAUTHORIZED"/>
+      <xs:enumeration value="FORBIDDEN"/>
+      <xs:enumeration value="NOT_FOUND"/>
+      <xs:enumeration value="NOT_ACCEPTABLE"/>
+      <xs:enumeration value="CONFLICT"/>
+      <xs:enumeration value="GONE"/>
+      <xs:enumeration value="PRECONDITION_FAILED"/>
+      <xs:enumeration value="UNSUPPORTED_MEDIA_TYPE"/>
+      <xs:enumeration value="INTERNAL_SERVER_ERROR"/>
+      <xs:enumeration value="SERVICE_UNAVAILABLE"/>
+    </xs:restriction>
+  </xs:simpleType>
 </xs:schema>
 

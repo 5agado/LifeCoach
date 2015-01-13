@@ -1,4 +1,4 @@
-#SDE Final Project
+#SOI Final Project
 
 The **Virtual LifeCoach** project is a Service Oriented Architecture (SOA) that wants to provide a basic framework for the definition of a wide range of possible services and applications, offering a modular, flexible and reusable set of tools for the management of lifestyle and health profiles.
 
@@ -35,11 +35,3 @@ In case of problems try the following commands to clean and recompile the source
 
     mvn clean
     mvn compile
-
-**Note** that for the first execution the download of the dependencies in the local Maven repository is required. This operation should take less than one minute, depending of the available connection.
-
-###Services Implemented##
-The complete API documentation has been defined using [name] and can be found at
-the following link : [link]
-
-For additional details and information refer to the attached project report. 
